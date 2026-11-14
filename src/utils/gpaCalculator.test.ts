@@ -1,0 +1,154 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {
+  calculateGpa,
+  gradeToGp,
+  marksToGrade,
+} from './gpaCalculator';
+import { SubjectEntry } from '../types/gpa';
+
+function makeSubject(
+  id: string,
+  grade: SubjectEntry['grade'],
+  isFourthSubject = false,
+  marks: number | null = null
+): SubjectEntry {
+  return {
+    id,
+    code: '101',
+    nameEn: id,
+    nameBn: id,
+    category: isFourthSubject ? 'fourth' : 'compulsory',
+    isFourthSubject,
+    grade,
+    marks,
+  };
+}
+
+test('marksToGrade converts official NCTB intervals accurately', () => {
+  assert.deepEqual(marksToGrade(100), { grade: 'A+', gp: 5.0 });
+  assert.deepEqual(marksToGrade(80), { grade: 'A+', gp: 5.0 });
+  assert.deepEqual(marksToGrade(79), { grade: 'A', gp: 4.0 });
+  assert.deepEqual(marksToGrade(70), { grade: 'A', gp: 4.0 });
+  assert.deepEqual(marksToGrade(65), { grade: 'A-', gp: 3.5 });
+  assert.deepEqual(marksToGrade(50), { grade: 'B', gp: 3.0 });
+  assert.deepEqual(marksToGrade(40), { grade: 'C', gp: 2.0 });
+  assert.deepEqual(marksToGrade(33), { grade: 'D', gp: 1.0 });
+  assert.deepEqual(marksToGrade(32), { grade: 'F', gp: 0.0 });
+  assert.deepEqual(marksToGrade(0), { grade: 'F', gp: 0.0 });
+});
+
+test('gradeToGp maps all letter grades accurately', () => {
+  assert.equal(gradeToGp('A+'), 5.0);
+  assert.equal(gradeToGp('A'), 4.0);
+  assert.equal(gradeToGp('A-'), 3.5);
+  assert.equal(gradeToGp('B'), 3.0);
+  assert.equal(gradeToGp('C'), 2.0);
+  assert.equal(gradeToGp('D'), 1.0);
+  assert.equal(gradeToGp('F'), 0.0);
+});
+
+test('calculateGpa applies 4th subject bonus max(0, gp - 2.00) including B (+1.00) and caps at 5.00', () => {
+  const subjects: SubjectEntry[] = [
+    makeSubject('bangla', 'A+'),
+    makeSubject('english', 'A'), // 4.00
+    makeSubject('math', 'A+'),
+    makeSubject('physics', 'A+'),
+    makeSubject('chemistry', 'A+'),
+    makeSubject('biology', 'A+'),
+    makeSubject('higher-math', 'A+', true), // +3.00 bonus
+  ];
+
+  const result = calculateGpa(subjects, 'grade');
+  assert.equal(result.totalMainSubjects, 6);
+  assert.equal(result.sumMainGradePoints, 29.0);
+  assert.equal(result.fourthSubjectBonus, 3.0);
+  assert.equal(result.gpaWithoutFourth, 4.83);
+  assert.equal(result.gpaWithFourth, 5.0);
+  assert.equal(result.isStandardAPlus, true);
+  assert.equal(result.isGoldenAPlus, false);
+  assert.equal(result.hasMainFail, false);
+
+  const bFourthSubjects = subjects.map((s) =>
+    s.isFourthSubject ? { ...s, grade: 'B' as const } : s
+  );
+  const bResult = calculateGpa(bFourthSubjects, 'grade');
+  assert.equal(bResult.fourthSubjectBonus, 1.0);
+  assert.equal(bResult.gpaWithFourth, 5.0);
+});
+
+test('calculateGpa detects Golden A+ when all main subjects are A+', () => {
+  const subjects: SubjectEntry[] = [
+    makeSubject('bangla', 'A+'),
+    makeSubject('english', 'A+'),
+    makeSubject('math', 'A+'),
+    makeSubject('physics', 'A+'),
+    makeSubject('chemistry', 'A+'),
+    makeSubject('biology', 'A+'),
+    makeSubject('higher-math', 'C', true), // +0 bonus
+  ];
+
+  const result = calculateGpa(subjects, 'grade');
+  assert.equal(result.fourthSubjectBonus, 0);
+  assert.equal(result.gpaWithoutFourth, 5.0);
+  assert.equal(result.gpaWithFourth, 5.0);
+  assert.equal(result.isGoldenAPlus, true);
+  assert.equal(result.isStandardAPlus, true);
+});
+
+test('calculateGpa fails student if any main subject is F, but NOT if only 4th subject is F', () => {
+  const mainFailSubjects: SubjectEntry[] = [
+    makeSubject('bangla', 'A+'),
+    makeSubject('english', 'F'),
+    makeSubject('math', 'A+'),
+    makeSubject('higher-math', 'A+', true),
+  ];
+
+  const failRes = calculateGpa(mainFailSubjects, 'grade');
+  assert.equal(failRes.hasMainFail, true);
+  assert.equal(failRes.gpaWithFourth, 0);
+  assert.equal(failRes.gpaWithoutFourth, 0);
+  assert.equal(failRes.finalLetterGrade, 'F');
+  assert.equal(failRes.failedSubjects.length, 1);
+  assert.equal(failRes.failedSubjects[0].id, 'english');
+
+  const fourthFailSubjects: SubjectEntry[] = [
+    makeSubject('bangla', 'A+'),
+    makeSubject('english', 'A'),
+    makeSubject('math', 'A+'),
+    makeSubject('higher-math', 'F', true),
+  ];
+
+  const fourthFailRes = calculateGpa(fourthFailSubjects, 'grade');
+  assert.equal(fourthFailRes.hasMainFail, false);
+  assert.equal(fourthFailRes.fourthSubjectFailed, true);
+  assert.equal(fourthFailRes.fourthSubjectBonus, 0);
+  assert.equal(fourthFailRes.gpaWithFourth, 4.67);
+  assert.equal(fourthFailRes.gpaWithoutFourth, 4.67);
+  assert.equal(fourthFailRes.finalLetterGrade, 'A');
+});
+
+test('calculateGpa handles marks input mode and invalid/incomplete marks', () => {
+  const subjects: SubjectEntry[] = [
+    makeSubject('bangla', 'F', false, 85),
+    makeSubject('english', 'F', false, 72),
+    makeSubject('math', 'F', false, 30), // fail
+    makeSubject('agri', 'F', true, 90), // +3.00 bonus
+  ];
+
+  const res = calculateGpa(subjects, 'marks');
+  assert.equal(res.hasMainFail, true);
+  assert.equal(res.failedSubjects[0].id, 'math');
+  assert.equal(res.gpaWithFourth, 0);
+
+  const validPassSubjects: SubjectEntry[] = [
+    makeSubject('bangla', 'F', false, 85),
+    makeSubject('english', 'F', false, 72),
+    makeSubject('math', 'F', false, 80),
+    makeSubject('agri', 'F', true, 90),
+  ];
+  const passRes = calculateGpa(validPassSubjects, 'marks');
+  assert.equal(passRes.hasMainFail, false);
+  assert.equal(passRes.gpaWithoutFourth, 4.67);
+  assert.equal(passRes.gpaWithFourth, 5.0);
+});

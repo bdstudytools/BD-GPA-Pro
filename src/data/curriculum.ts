@@ -1,0 +1,811 @@
+import {
+  EducationBoard,
+  ExamLevel,
+  LetterGrade,
+  StudyGroup,
+  SubjectEntry,
+} from '../types/gpa';
+
+export interface BoardInfo {
+  id: EducationBoard;
+  nameEn: string;
+  nameBn: string;
+}
+
+export const EDUCATION_BOARDS: BoardInfo[] = [
+  { id: 'dhaka', nameEn: 'Dhaka', nameBn: 'ঢাকা' },
+  { id: 'rajshahi', nameEn: 'Rajshahi', nameBn: 'রাজশাহী' },
+  { id: 'comilla', nameEn: 'Comilla', nameBn: 'কুমিল্লা' },
+  { id: 'jessore', nameEn: 'Jessore', nameBn: 'যশোর' },
+  { id: 'chittagong', nameEn: 'Chattogram', nameBn: 'চট্টগ্রাম' },
+  { id: 'barisal', nameEn: 'Barishal', nameBn: 'বরিশাল' },
+  { id: 'sylhet', nameEn: 'Sylhet', nameBn: 'সিলেট' },
+  { id: 'dinajpur', nameEn: 'Dinajpur', nameBn: 'দিনাজপুর' },
+  { id: 'mymensingh', nameEn: 'Mymensingh', nameBn: 'ময়মনসিংহ' },
+  { id: 'madrasah', nameEn: 'Madrasah', nameBn: 'মাদ্রাসা' },
+  { id: 'technical', nameEn: 'Technical', nameBn: 'কারিগরি' },
+];
+
+export interface GradingScaleRow {
+  interval: string;
+  minMarks: number;
+  maxMarks: number;
+  grade: LetterGrade;
+  gp: number;
+  remarkEn: string;
+  remarkBn: string;
+}
+
+export const GRADING_SCALE: GradingScaleRow[] = [
+  {
+    interval: '80 – 100',
+    minMarks: 80,
+    maxMarks: 100,
+    grade: 'A+',
+    gp: 5.0,
+    remarkEn: 'Outstanding',
+    remarkBn: 'অসাধারণ',
+  },
+  {
+    interval: '70 – 79',
+    minMarks: 70,
+    maxMarks: 79,
+    grade: 'A',
+    gp: 4.0,
+    remarkEn: 'Excellent',
+    remarkBn: 'অতি উত্তম',
+  },
+  {
+    interval: '60 – 69',
+    minMarks: 60,
+    maxMarks: 69,
+    grade: 'A-',
+    gp: 3.5,
+    remarkEn: 'Very Good',
+    remarkBn: 'উত্তম',
+  },
+  {
+    interval: '50 – 59',
+    minMarks: 50,
+    maxMarks: 59,
+    grade: 'B',
+    gp: 3.0,
+    remarkEn: 'Good',
+    remarkBn: 'ভালো',
+  },
+  {
+    interval: '40 – 49',
+    minMarks: 40,
+    maxMarks: 49,
+    grade: 'C',
+    gp: 2.0,
+    remarkEn: 'Satisfactory',
+    remarkBn: 'সন্তোষজনক',
+  },
+  {
+    interval: '33 – 39',
+    minMarks: 33,
+    maxMarks: 39,
+    grade: 'D',
+    gp: 1.0,
+    remarkEn: 'Pass',
+    remarkBn: 'সাধারণ পাস',
+  },
+  {
+    interval: '0 – 32',
+    minMarks: 0,
+    maxMarks: 32,
+    grade: 'F',
+    gp: 0.0,
+    remarkEn: 'Fail',
+    remarkBn: 'অকৃতকার্য',
+  },
+];
+
+export const LETTER_GRADES: LetterGrade[] = ['A+', 'A', 'A-', 'B', 'C', 'D', 'F'];
+
+export interface FourthSubjectOption {
+  id: string;
+  code: string;
+  nameEn: string;
+  nameBn: string;
+}
+
+export const FOURTH_SUBJECT_OPTIONS: Record<
+  ExamLevel,
+  Record<StudyGroup, FourthSubjectOption[]>
+> = {
+  ssc: {
+    science: [
+      { id: 'ssc-higher-math', code: '126', nameEn: 'Higher Mathematics', nameBn: 'উচ্চতর গণিত' },
+      { id: 'ssc-biology', code: '138', nameEn: 'Biology', nameBn: 'জীববিজ্ঞান' },
+      { id: 'ssc-agri', code: '134', nameEn: 'Agricultural Studies', nameBn: 'কৃষি শিক্ষা' },
+      { id: 'ssc-home-sci', code: '151', nameEn: 'Home Science', nameBn: 'গার্হস্থ্য বিজ্ঞান' },
+    ],
+    business: [
+      { id: 'ssc-agri', code: '134', nameEn: 'Agricultural Studies', nameBn: 'কৃষি শিক্ষা' },
+      { id: 'ssc-home-sci', code: '151', nameEn: 'Home Science', nameBn: 'গার্হস্থ্য বিজ্ঞান' },
+      { id: 'ssc-music', code: '149', nameEn: 'Music', nameBn: 'সংগীত' },
+    ],
+    humanities: [
+      { id: 'ssc-economics', code: '141', nameEn: 'Economics', nameBn: 'অর্থনীতি' },
+      { id: 'ssc-agri', code: '134', nameEn: 'Agricultural Studies', nameBn: 'কৃষি শিক্ষা' },
+      { id: 'ssc-home-sci', code: '151', nameEn: 'Home Science', nameBn: 'গার্হস্থ্য বিজ্ঞান' },
+      { id: 'ssc-music', code: '149', nameEn: 'Music', nameBn: 'সংগীত' },
+    ],
+  },
+  hsc: {
+    science: [
+      { id: 'hsc-higher-math', code: '265–266', nameEn: 'Higher Mathematics', nameBn: 'উচ্চতর গণিত' },
+      { id: 'hsc-biology', code: '178–179', nameEn: 'Biology', nameBn: 'জীববিজ্ঞান' },
+      { id: 'hsc-statistics', code: '129–130', nameEn: 'Statistics', nameBn: 'পরিসংখ্যান' },
+      { id: 'hsc-agri', code: '239–240', nameEn: 'Agriculture Studies', nameBn: 'কৃষিশিক্ষা' },
+      { id: 'hsc-psychology', code: '123–124', nameEn: 'Psychology', nameBn: 'মনোবিজ্ঞান' },
+    ],
+    business: [
+      { id: 'hsc-statistics', code: '129–130', nameEn: 'Statistics', nameBn: 'পরিসংখ্যান' },
+      { id: 'hsc-economics', code: '109–110', nameEn: 'Economics', nameBn: 'অর্থনীতি' },
+      { id: 'hsc-agri', code: '239–240', nameEn: 'Agriculture Studies', nameBn: 'কৃষিশিক্ষা' },
+      { id: 'hsc-geography', code: '125–126', nameEn: 'Geography', nameBn: 'ভূগোল' },
+      { id: 'hsc-marketing', code: '286–287', nameEn: 'Production Management & Marketing', nameBn: 'উৎপাদন ব্যবস্থাপনা ও বিপণন' },
+      { id: 'hsc-accounting', code: '253–254', nameEn: 'Accounting', nameBn: 'হিসাববিজ্ঞান' },
+      { id: 'hsc-finance', code: '292–293', nameEn: 'Finance, Banking & Insurance', nameBn: 'ফিন্যান্স, ব্যাংকিং ও বিমা' },
+      { id: 'hsc-management', code: '277–278', nameEn: 'Business Organization & Management', nameBn: 'ব্যবসায় সংগঠন ও ব্যবস্থাপনা' },
+    ],
+    humanities: [
+      { id: 'hsc-logic', code: '121–122', nameEn: 'Logic', nameBn: 'যুক্তিবিদ্যা' },
+      { id: 'hsc-history', code: '304–305', nameEn: 'History', nameBn: 'ইতিহাস' },
+      { id: 'hsc-civics', code: '269–270', nameEn: 'Civics & Good Governance', nameBn: 'পৌরনীতি ও সুশাসন' },
+      { id: 'hsc-economics', code: '109–110', nameEn: 'Economics', nameBn: 'অর্থনীতি' },
+      { id: 'hsc-geography', code: '125–126', nameEn: 'Geography', nameBn: 'ভূগোল' },
+      { id: 'hsc-sociology', code: '117–118', nameEn: 'Sociology', nameBn: 'সমাজবিজ্ঞান' },
+      { id: 'hsc-social-work', code: '271–272', nameEn: 'Social Work', nameBn: 'সমাজকর্ম' },
+      { id: 'hsc-islamic-history', code: '267–268', nameEn: 'Islamic History & Culture', nameBn: 'ইসলামের ইতিহাস ও সংস্কৃতি' },
+      { id: 'hsc-islamic-studies', code: '249–250', nameEn: 'Islamic Studies', nameBn: 'ইসলাম শিক্ষা' },
+      { id: 'hsc-psychology', code: '123–124', nameEn: 'Psychology', nameBn: 'মনোবিজ্ঞান' },
+      { id: 'hsc-agri', code: '239–240', nameEn: 'Agriculture Studies', nameBn: 'কৃষিশিক্ষা' },
+      { id: 'hsc-statistics', code: '129–130', nameEn: 'Statistics', nameBn: 'পরিসংখ্যান' },
+    ],
+  },
+};
+
+interface SubjectTemplate {
+  id: string;
+  code: string;
+  nameEn: string;
+  nameBn: string;
+  category: 'compulsory' | 'group' | 'fourth';
+  isTwoPaper?: boolean;
+  defaultGrade: LetterGrade;
+  defaultMarks: number;
+}
+
+const SSC_COMPULSORY_GENERAL: SubjectTemplate[] = [
+  {
+    id: 'ssc-bangla',
+    code: '101',
+    nameEn: 'Bangla',
+    nameBn: 'বাংলা',
+    category: 'compulsory',
+    defaultGrade: 'A+',
+    defaultMarks: 84,
+  },
+  {
+    id: 'ssc-english',
+    code: '107',
+    nameEn: 'English',
+    nameBn: 'ইংরেজি',
+    category: 'compulsory',
+    defaultGrade: 'A',
+    defaultMarks: 76,
+  },
+  {
+    id: 'ssc-math',
+    code: '109',
+    nameEn: 'Mathematics',
+    nameBn: 'গণিত',
+    category: 'compulsory',
+    defaultGrade: 'A+',
+    defaultMarks: 88,
+  },
+  {
+    id: 'ssc-ict',
+    code: '154',
+    nameEn: 'Information & Communication Technology',
+    nameBn: 'তথ্য ও যোগাযোগ প্রযুক্তি',
+    category: 'compulsory',
+    defaultGrade: 'A+',
+    defaultMarks: 85,
+  },
+  {
+    id: 'ssc-religion',
+    code: '111',
+    nameEn: 'Religion & Moral Education',
+    nameBn: 'ধর্ম ও নৈতিক শিক্ষা',
+    category: 'compulsory',
+    defaultGrade: 'A+',
+    defaultMarks: 83,
+  },
+];
+
+const SSC_BGS: SubjectTemplate = {
+  id: 'ssc-bgs',
+  code: '150',
+  nameEn: 'Bangladesh & Global Studies',
+  nameBn: 'বাংলাদেশ ও বিশ্বপরিচয়',
+  category: 'compulsory',
+  defaultGrade: 'A',
+  defaultMarks: 75,
+};
+
+const SSC_GENERAL_SCIENCE: SubjectTemplate = {
+  id: 'ssc-gen-sci',
+  code: '127',
+  nameEn: 'General Science',
+  nameBn: 'সাধারণ বিজ্ঞান',
+  category: 'compulsory',
+  defaultGrade: 'A',
+  defaultMarks: 74,
+};
+
+const DAKHIL_COMPULSORY: SubjectTemplate[] = [
+  {
+    id: 'dakhil-quran',
+    code: '101',
+    nameEn: 'Quran Mazid & Tajvid',
+    nameBn: 'কুরআন মাজিদ ও তাজভিদ',
+    category: 'compulsory',
+    defaultGrade: 'A+',
+    defaultMarks: 85,
+  },
+  {
+    id: 'dakhil-hadith',
+    code: '102',
+    nameEn: 'Hadith Sharif',
+    nameBn: 'হাদিস শরিফ',
+    category: 'compulsory',
+    defaultGrade: 'A+',
+    defaultMarks: 82,
+  },
+  {
+    id: 'dakhil-arabic',
+    code: '103',
+    nameEn: 'Arabic (1st & 2nd)',
+    nameBn: 'আরবি (১ম ও ২য় পত্র)',
+    category: 'compulsory',
+    defaultGrade: 'A',
+    defaultMarks: 76,
+  },
+  {
+    id: 'dakhil-bangla',
+    code: '106',
+    nameEn: 'Bangla',
+    nameBn: 'বাংলা',
+    category: 'compulsory',
+    defaultGrade: 'A+',
+    defaultMarks: 83,
+  },
+  {
+    id: 'dakhil-english',
+    code: '107',
+    nameEn: 'English',
+    nameBn: 'ইংরেজি',
+    category: 'compulsory',
+    defaultGrade: 'A',
+    defaultMarks: 74,
+  },
+  {
+    id: 'dakhil-math',
+    code: '108',
+    nameEn: 'Mathematics',
+    nameBn: 'গণিত',
+    category: 'compulsory',
+    defaultGrade: 'A+',
+    defaultMarks: 86,
+  },
+  {
+    id: 'dakhil-fiqh',
+    code: '105',
+    nameEn: 'Aqaid & Fiqh',
+    nameBn: 'আকাইদ ও ফিকহ',
+    category: 'compulsory',
+    defaultGrade: 'A+',
+    defaultMarks: 84,
+  },
+  {
+    id: 'dakhil-ict',
+    code: '140',
+    nameEn: 'Information & Communication Technology',
+    nameBn: 'তথ্য ও যোগাযোগ প্রযুক্তি',
+    category: 'compulsory',
+    defaultGrade: 'A+',
+    defaultMarks: 85,
+  },
+];
+
+const HSC_COMPULSORY_GENERAL: SubjectTemplate[] = [
+  {
+    id: 'hsc-bangla',
+    code: '101–102',
+    nameEn: 'Bangla',
+    nameBn: 'বাংলা',
+    category: 'compulsory',
+    isTwoPaper: true,
+    defaultGrade: 'A+',
+    defaultMarks: 82,
+  },
+  {
+    id: 'hsc-english',
+    code: '107–108',
+    nameEn: 'English',
+    nameBn: 'ইংরেজি',
+    category: 'compulsory',
+    isTwoPaper: true,
+    defaultGrade: 'A',
+    defaultMarks: 75,
+  },
+  {
+    id: 'hsc-ict',
+    code: '275',
+    nameEn: 'Information & Communication Technology',
+    nameBn: 'তথ্য ও যোগাযোগ প্রযুক্তি',
+    category: 'compulsory',
+    isTwoPaper: false,
+    defaultGrade: 'A+',
+    defaultMarks: 86,
+  },
+];
+
+const ALIM_COMPULSORY: SubjectTemplate[] = [
+  {
+    id: 'alim-quran',
+    code: '201',
+    nameEn: 'Quran Mazid',
+    nameBn: 'কুরআন মাজিদ',
+    category: 'compulsory',
+    defaultGrade: 'A+',
+    defaultMarks: 84,
+  },
+  {
+    id: 'alim-hadith',
+    code: '202',
+    nameEn: 'Hadith & Usul-e-Hadith',
+    nameBn: 'হাদিস ও উসুলুল হাদিস',
+    category: 'compulsory',
+    defaultGrade: 'A+',
+    defaultMarks: 82,
+  },
+  {
+    id: 'alim-arabic',
+    code: '203',
+    nameEn: 'Arabic & Balagat',
+    nameBn: 'আরবি ও বালাগাত',
+    category: 'compulsory',
+    defaultGrade: 'A',
+    defaultMarks: 76,
+  },
+  {
+    id: 'alim-bangla',
+    code: '236',
+    nameEn: 'Bangla',
+    nameBn: 'বাংলা',
+    category: 'compulsory',
+    defaultGrade: 'A+',
+    defaultMarks: 83,
+  },
+  {
+    id: 'alim-english',
+    code: '237',
+    nameEn: 'English',
+    nameBn: 'ইংরেজি',
+    category: 'compulsory',
+    defaultGrade: 'A',
+    defaultMarks: 74,
+  },
+  {
+    id: 'alim-ict',
+    code: '240',
+    nameEn: 'Information & Communication Technology',
+    nameBn: 'তথ্য ও যোগাযোগ প্রযুক্তি',
+    category: 'compulsory',
+    defaultGrade: 'A+',
+    defaultMarks: 85,
+  },
+];
+
+const SSC_GROUP_SUBJECTS: Record<StudyGroup, SubjectTemplate[]> = {
+  science: [
+    {
+      id: 'ssc-physics',
+      code: '136',
+      nameEn: 'Physics',
+      nameBn: 'পদার্থবিজ্ঞান',
+      category: 'group',
+      defaultGrade: 'A+',
+      defaultMarks: 87,
+    },
+    {
+      id: 'ssc-chemistry',
+      code: '137',
+      nameEn: 'Chemistry',
+      nameBn: 'রসায়ন',
+      category: 'group',
+      defaultGrade: 'A+',
+      defaultMarks: 84,
+    },
+    {
+      id: 'ssc-biology',
+      code: '138',
+      nameEn: 'Biology',
+      nameBn: 'জীববিজ্ঞান',
+      category: 'group',
+      defaultGrade: 'A+',
+      defaultMarks: 82,
+    },
+    {
+      id: 'ssc-higher-math',
+      code: '126',
+      nameEn: 'Higher Mathematics',
+      nameBn: 'উচ্চতর গণিত',
+      category: 'fourth',
+      defaultGrade: 'A+',
+      defaultMarks: 85,
+    },
+  ],
+  business: [
+    {
+      id: 'ssc-accounting',
+      code: '146',
+      nameEn: 'Accounting',
+      nameBn: 'হিসাববিজ্ঞান',
+      category: 'group',
+      defaultGrade: 'A+',
+      defaultMarks: 86,
+    },
+    {
+      id: 'ssc-finance',
+      code: '152',
+      nameEn: 'Finance & Banking',
+      nameBn: 'ফিন্যান্স ও ব্যাংকিং',
+      category: 'group',
+      defaultGrade: 'A+',
+      defaultMarks: 82,
+    },
+    {
+      id: 'ssc-business-ent',
+      code: '143',
+      nameEn: 'Business Entrepreneurship',
+      nameBn: 'ব্যবসায় উদ্যোগ',
+      category: 'group',
+      defaultGrade: 'A',
+      defaultMarks: 77,
+    },
+    {
+      id: 'ssc-agri',
+      code: '134',
+      nameEn: 'Agricultural Studies',
+      nameBn: 'কৃষি শিক্ষা',
+      category: 'fourth',
+      defaultGrade: 'A+',
+      defaultMarks: 85,
+    },
+  ],
+  humanities: [
+    {
+      id: 'ssc-history',
+      code: '153',
+      nameEn: 'History of Bangladesh & World Civilization',
+      nameBn: 'বাংলাদেশের ইতিহাস ও বিশ্বসভ্যতা',
+      category: 'group',
+      defaultGrade: 'A',
+      defaultMarks: 76,
+    },
+    {
+      id: 'ssc-geography',
+      code: '110',
+      nameEn: 'Geography & Environment',
+      nameBn: 'ভূগোল ও পরিবেশ',
+      category: 'group',
+      defaultGrade: 'A+',
+      defaultMarks: 81,
+    },
+    {
+      id: 'ssc-civics',
+      code: '140',
+      nameEn: 'Civics & Citizenship',
+      nameBn: 'পৌরনীতি ও নাগরিকতা',
+      category: 'group',
+      defaultGrade: 'A+',
+      defaultMarks: 83,
+    },
+    {
+      id: 'ssc-economics',
+      code: '141',
+      nameEn: 'Economics',
+      nameBn: 'অর্থনীতি',
+      category: 'fourth',
+      defaultGrade: 'A+',
+      defaultMarks: 86,
+    },
+  ],
+};
+
+const HSC_GROUP_SUBJECTS: Record<StudyGroup, SubjectTemplate[]> = {
+  science: [
+    {
+      id: 'hsc-physics',
+      code: '174–175',
+      nameEn: 'Physics',
+      nameBn: 'পদার্থবিজ্ঞান',
+      category: 'group',
+      isTwoPaper: true,
+      defaultGrade: 'A+',
+      defaultMarks: 85,
+    },
+    {
+      id: 'hsc-chemistry',
+      code: '176–177',
+      nameEn: 'Chemistry',
+      nameBn: 'রসায়ন',
+      category: 'group',
+      isTwoPaper: true,
+      defaultGrade: 'A+',
+      defaultMarks: 83,
+    },
+    {
+      id: 'hsc-biology',
+      code: '178–179',
+      nameEn: 'Biology',
+      nameBn: 'জীববিজ্ঞান',
+      category: 'group',
+      isTwoPaper: true,
+      defaultGrade: 'A+',
+      defaultMarks: 82,
+    },
+    {
+      id: 'hsc-higher-math',
+      code: '265–266',
+      nameEn: 'Higher Mathematics',
+      nameBn: 'উচ্চতর গণিত',
+      category: 'fourth',
+      isTwoPaper: true,
+      defaultGrade: 'A+',
+      defaultMarks: 86,
+    },
+  ],
+  business: [
+    {
+      id: 'hsc-accounting',
+      code: '253–254',
+      nameEn: 'Accounting',
+      nameBn: 'হিসাববিজ্ঞান',
+      category: 'group',
+      isTwoPaper: true,
+      defaultGrade: 'A+',
+      defaultMarks: 85,
+    },
+    {
+      id: 'hsc-management',
+      code: '277–278',
+      nameEn: 'Business Organization & Management',
+      nameBn: 'ব্যবসায় সংগঠন ও ব্যবস্থাপনা',
+      category: 'group',
+      isTwoPaper: true,
+      defaultGrade: 'A',
+      defaultMarks: 77,
+    },
+    {
+      id: 'hsc-finance',
+      code: '292–293',
+      nameEn: 'Finance, Banking & Insurance',
+      nameBn: 'ফিন্যান্স, ব্যাংকিং ও বিমা',
+      category: 'group',
+      isTwoPaper: true,
+      defaultGrade: 'A+',
+      defaultMarks: 81,
+    },
+    {
+      id: 'hsc-statistics',
+      code: '129–130',
+      nameEn: 'Statistics',
+      nameBn: 'পরিসংখ্যান',
+      category: 'fourth',
+      isTwoPaper: true,
+      defaultGrade: 'A+',
+      defaultMarks: 84,
+    },
+  ],
+  humanities: [
+    {
+      id: 'hsc-economics',
+      code: '109–110',
+      nameEn: 'Economics',
+      nameBn: 'অর্থনীতি',
+      category: 'group',
+      isTwoPaper: true,
+      defaultGrade: 'A',
+      defaultMarks: 76,
+    },
+    {
+      id: 'hsc-civics',
+      code: '269–270',
+      nameEn: 'Civics & Good Governance',
+      nameBn: 'পৌরনীতি ও সুশাসন',
+      category: 'group',
+      isTwoPaper: true,
+      defaultGrade: 'A+',
+      defaultMarks: 82,
+    },
+    {
+      id: 'hsc-islamic-history',
+      code: '267–268',
+      nameEn: 'Islamic History & Culture',
+      nameBn: 'ইসলামের ইতিহাস ও সংস্কৃতি',
+      category: 'group',
+      isTwoPaper: true,
+      defaultGrade: 'A+',
+      defaultMarks: 81,
+    },
+    {
+      id: 'hsc-logic',
+      code: '121–122',
+      nameEn: 'Logic',
+      nameBn: 'যুক্তিবিদ্যা',
+      category: 'fourth',
+      isTwoPaper: true,
+      defaultGrade: 'A+',
+      defaultMarks: 84,
+    },
+  ],
+};
+
+export function getSubjectsForConfig(
+  examLevel: ExamLevel,
+  group: StudyGroup,
+  board: EducationBoard = 'dhaka'
+): SubjectEntry[] {
+  let templates: SubjectTemplate[] = [];
+
+  if (examLevel === 'ssc') {
+    if (board === 'madrasah') {
+      const groupSpecific = SSC_GROUP_SUBJECTS[group];
+      templates = [...DAKHIL_COMPULSORY, ...groupSpecific];
+    } else {
+      const middleCompulsory = group === 'science' ? [SSC_BGS] : [SSC_GENERAL_SCIENCE];
+      templates = [
+        ...SSC_COMPULSORY_GENERAL,
+        ...middleCompulsory,
+        ...SSC_GROUP_SUBJECTS[group],
+      ];
+    }
+  } else {
+    if (board === 'madrasah') {
+      templates = [...ALIM_COMPULSORY, ...HSC_GROUP_SUBJECTS[group]];
+    } else {
+      templates = [...HSC_COMPULSORY_GENERAL, ...HSC_GROUP_SUBJECTS[group]];
+    }
+  }
+
+  return templates.map((item) => ({
+    id: item.id,
+    code: item.code,
+    nameEn: item.nameEn,
+    nameBn: item.nameBn,
+    category: item.category,
+    isFourthSubject: item.category === 'fourth',
+    isTwoPaper: item.isTwoPaper,
+    grade: item.defaultGrade,
+    marks: item.defaultMarks,
+  }));
+}
+
+export const UI_TEXT = {
+  en: {
+    brandName: 'BD GPA Pro',
+    navCalculator: 'GPA Calculator',
+    navRules: '4th Subject Rules',
+    primaryCta: 'Reset Defaults',
+    heroTitle: 'SSC & HSC GPA Calculator',
+    heroSubtitle:
+      'Calculate your official Bangladesh Education Board GPA with accurate 4th subject calculation.',
+    examLevelLabel: 'Exam Level',
+    sscOption: 'SSC / Dakhil',
+    hscOption: 'HSC / Alim',
+    groupLabel: 'Group',
+    groups: {
+      science: 'Science',
+      business: 'Business Studies',
+      humanities: 'Humanities',
+    },
+    boardLabel: 'Education Board',
+    inputModeLabel: 'Input Mode',
+    byGrade: 'Letter Grade',
+    byMarks: 'Marks (0–100)',
+    subjectsHeading: 'Subject Grades',
+    subjectsSub:
+      'Select your letter grade for each subject and choose your 4th subject from the dropdown.',
+    roleCompulsory: 'Compulsory',
+    roleGroup: 'Main Group',
+    roleFourth: '4th Subject',
+    twoPaperSuffix: '1st & 2nd Paper (200 Marks)',
+    singlePaperSuffix: '100 Marks',
+    fourthSelectLabel: 'Select 4th Subject',
+    gpaWithFourth: 'GPA (With 4th Subject)',
+    gpaWithoutFourth: 'GPA (Without 4th)',
+    calculateGpaBtn: 'Calculate GPA',
+    calculatePromptTitle: 'Ready to Calculate',
+    calculatePromptDesc:
+      'Select your grades on the left, then click "Calculate GPA" to see your result.',
+    goldenBadge: 'Golden A+ Achieved',
+    standardAPlusBadge: 'A+ Achieved',
+    failedStatus: 'Failed (F / GPA 0.00)',
+    failAlertTitle: 'Failing Grade Detected in Main Subject(s)',
+    failAlertBody:
+      'Under Bangladesh Education Board rules, an F in any compulsory or main group subject results in overall GPA 0.00. Need improvement in:',
+    fourthFailNote:
+      'Your 4th subject has F (0.00). Per board rules, it adds +0.00 bonus without failing your overall result.',
+    rulesHeading: 'Official Bangladesh Education Board Grading Scale',
+    rulesSub:
+      'Standard NCTB evaluation intervals applied across Dhaka, Rajshahi, Comilla, Jessore, Chattogram, Barishal, Sylhet, Dinajpur, Mymensingh, Madrasah, and Technical boards.',
+    fourthRuleHeading: 'How 4th Subject (Optional Subject) Bonus Works',
+    colInterval: 'Marks Interval',
+    colLetter: 'Letter Grade',
+    colPoint: 'Grade Point',
+    colAssessment: 'Assessment',
+  },
+  bn: {
+    brandName: 'BD GPA Pro',
+    navCalculator: 'জিপিএ ক্যালকুলেটর',
+    navRules: 'চতুর্থ বিষয়ের নিয়ম',
+    primaryCta: 'রিসেট করুন',
+    heroTitle: 'এসএসসি ও এইচএসসি জিপিএ ক্যালকুলেটর',
+    heroSubtitle:
+      'সঠিক চতুর্থ বিষয়ের বোনাস পয়েন্টসহ বাংলাদেশ শিক্ষা বোর্ডের অফিসিয়াল জিপিএ হিসাব করুন।',
+    examLevelLabel: 'পরীক্ষার স্তর',
+    sscOption: 'এসএসসি / দাখিল',
+    hscOption: 'এইচএসসি / আলিম',
+    groupLabel: 'বিভাগ',
+    groups: {
+      science: 'বিজ্ঞান',
+      business: 'ব্যবসায় শিক্ষা',
+      humanities: 'মানবিক',
+    },
+    boardLabel: 'শিক্ষা বোর্ড',
+    inputModeLabel: 'ইনপুট মাধ্যম',
+    byGrade: 'লেটার গ্রেড',
+    byMarks: 'নম্বর (০–১০০)',
+    subjectsHeading: 'বিষয়ভিত্তিক গ্রেড ও নম্বর',
+    subjectsSub:
+      'লেটার গ্রেড নির্বাচন করুন অথবা ০–১০০ নম্বর লিখুন এবং ড্রপডাউন থেকে ৪র্থ বিষয় নির্বাচন করুন।',
+    roleCompulsory: 'আবশ্যিক',
+    roleGroup: 'মূল বিষয়',
+    roleFourth: '৪র্থ বিষয়',
+    twoPaperSuffix: '১ম ও ২য় পত্র (২০০ নম্বর)',
+    singlePaperSuffix: '১০০ নম্বর',
+    fourthSelectLabel: '৪র্থ বিষয় নির্বাচন করুন',
+    gpaWithFourth: 'চূড়ান্ত জিপিএ (৪র্থ বিষয়সহ)',
+    gpaWithoutFourth: 'জিপিএ (৪র্থ বিষয় ছাড়া)',
+    calculateGpaBtn: 'ফলাফল দেখুন',
+    calculatePromptTitle: 'জিপিএ হিসাব করতে প্রস্তুত',
+    calculatePromptDesc:
+      'বাম পাশে বিষয়গুলোর গ্রেড বা নম্বর দিয়ে "ফলাফল দেখুন" বাটনে ক্লিক করুন।',
+    goldenBadge: 'গোল্ডেন A+ অর্জিত',
+    standardAPlusBadge: 'A+ অর্জিত',
+    failedStatus: 'অকৃতকার্য (F / GPA 0.00)',
+    failAlertTitle: 'মূল বিষয়ে অকৃতকার্য (F) শনাক্ত হয়েছে',
+    failAlertBody:
+      'বাংলাদেশ শিক্ষা বোর্ডের নিয়মানুযায়ী, যেকোনো আবশ্যিক বা মূল বিষয়ে F (০–৩২ নম্বর) পেলে মোট জিপিএ ০.০০ হয়। উন্নতি প্রয়োজন:',
+    fourthFailNote:
+      'আপনার ৪র্থ বিষয়ে F (০.০০) এসেছে। বোর্ডের নিয়মে এটি বোনাস হিসেবে ০.০০ যোগ করবে এবং মূল ফলাফলে ফেল হবে না।',
+    invalidMarksNotice: 'লাল চিহ্নিত বিষয়ে অনুগ্রহ করে ০ থেকে ১০০ এর মধ্যে সঠিক নম্বর দিন।',
+    incompleteMarksNotice: 'সঠিক জিপিএ হিসাবের জন্য সব বিষয়ের নম্বর দিন।',
+    rulesHeading: 'বাংলাদেশ শিক্ষা বোর্ডের অফিসিয়াল গ্রেডিং স্কেল',
+    rulesSub:
+      'ঢাকা, রাজশাহী, কুমিল্লা, যশোর, চট্টগ্রাম, বরিশাল, সিলেট, দিনাজপুর, ময়মনসিংহ, মাদ্রাসা ও কারিগরি বোর্ডে প্রযোজ্য গ্রেডিং পদ্ধতি।',
+    fourthRuleHeading: 'চতুর্থ বিষয়ের (ঐচ্ছিক বিষয়) বোনাস পয়েন্টের নিয়ম',
+    colInterval: 'নম্বরের ব্যবধান',
+    colLetter: 'লেটার গ্রেড',
+    colPoint: 'গ্রেড পয়েন্ট',
+    colAssessment: 'মূল্যায়ন',
+  },
+} as const;
