@@ -6,24 +6,36 @@ import { FOURTH_SUBJECT_OPTIONS, getSubjectsForConfig } from './data/curriculum'
 import {
   ActiveTab,
   ExamLevel,
+  InputMode,
   LetterGrade,
   StudyGroup,
   SubjectEntry,
 } from './types/gpa';
-import { calculateGpa } from './utils/gpaCalculator';
+import { calculateGpa, isValidMark, marksToGrade } from './utils/gpaCalculator';
+
+const GRADE_REPRESENTATIVE_MARKS: Record<LetterGrade, number> = {
+  'A+': 85,
+  A: 75,
+  'A-': 65,
+  B: 55,
+  C: 45,
+  D: 36,
+  F: 25,
+};
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('calculator');
   const [examLevel, setExamLevel] = useState<ExamLevel>('ssc');
   const [group, setGroup] = useState<StudyGroup>('science');
+  const [inputMode, setInputMode] = useState<InputMode>('grade');
   const [subjects, setSubjects] = useState<SubjectEntry[]>(() =>
     getSubjectsForConfig('ssc', 'science')
   );
   const [showResult, setShowResult] = useState<boolean>(false);
 
   const result = useMemo(
-    () => calculateGpa(subjects, 'grade'),
-    [subjects]
+    () => calculateGpa(subjects, inputMode),
+    [subjects, inputMode]
   );
 
   const handleExamChange = (nextLevel: ExamLevel) => {
@@ -38,9 +50,97 @@ export default function App() {
     setShowResult(false);
   };
 
+  const handleInputModeChange = (nextMode: InputMode) => {
+    if (nextMode === 'marks') {
+      setSubjects((prev) =>
+        prev.map((s) => {
+          const fallback = GRADE_REPRESENTATIVE_MARKS[s.grade];
+          if (s.isTwoPaper) {
+            return {
+              ...s,
+              paper1Marks: isValidMark(s.paper1Marks) ? s.paper1Marks : fallback,
+              paper2Marks: isValidMark(s.paper2Marks) ? s.paper2Marks : fallback,
+            };
+          }
+          return {
+            ...s,
+            marks: isValidMark(s.marks) ? s.marks : fallback,
+          };
+        })
+      );
+    } else if (inputMode === 'marks') {
+      setSubjects((prev) =>
+        prev.map((s) => {
+          if (s.isTwoPaper && isValidMark(s.paper1Marks) && isValidMark(s.paper2Marks)) {
+            const avg = ((s.paper1Marks as number) + (s.paper2Marks as number)) / 2;
+            return { ...s, grade: marksToGrade(avg).grade };
+          }
+          if (!s.isTwoPaper && isValidMark(s.marks)) {
+            return { ...s, grade: marksToGrade(s.marks as number).grade };
+          }
+          return s;
+        })
+      );
+    }
+    setInputMode(nextMode);
+    setShowResult(false);
+  };
+
   const handleUpdateSubjectGrade = (id: string, grade: LetterGrade) => {
+    const rep = GRADE_REPRESENTATIVE_MARKS[grade];
     setSubjects((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, grade } : s))
+      prev.map((s) =>
+        s.id === id
+          ? {
+              ...s,
+              grade,
+              marks: rep,
+              paper1Marks: s.isTwoPaper ? rep : s.paper1Marks,
+              paper2Marks: s.isTwoPaper ? rep : s.paper2Marks,
+            }
+          : s
+      )
+    );
+    setShowResult(false);
+  };
+
+  const handleUpdateSubjectMarks = (id: string, marks: number | null) => {
+    setSubjects((prev) =>
+      prev.map((s) => {
+        if (s.id !== id) return s;
+        if (marks === null) {
+          return { ...s, marks: null };
+        }
+        return {
+          ...s,
+          marks,
+          grade: isValidMark(marks) ? marksToGrade(marks).grade : s.grade,
+        };
+      })
+    );
+    setShowResult(false);
+  };
+
+  const handleUpdateSubjectPaperMarks = (
+    id: string,
+    paper: 'paper1' | 'paper2',
+    marks: number | null
+  ) => {
+    setSubjects((prev) =>
+      prev.map((s) => {
+        if (s.id !== id) return s;
+        const nextP1 = paper === 'paper1' ? marks : s.paper1Marks;
+        const nextP2 = paper === 'paper2' ? marks : s.paper2Marks;
+        const bothValid = isValidMark(nextP1) && isValidMark(nextP2);
+        return {
+          ...s,
+          paper1Marks: nextP1,
+          paper2Marks: nextP2,
+          grade: bothValid
+            ? marksToGrade(((nextP1 as number) + (nextP2 as number)) / 2).grade
+            : s.grade,
+        };
+      })
     );
     setShowResult(false);
   };
@@ -79,7 +179,7 @@ export default function App() {
         ];
       }
 
-      // Otherwise replace the 4th subject entry in place while preserving its current grade
+      // Otherwise replace the 4th subject entry in place while preserving its current grade/marks
       return prev.map((s) => {
         if (!s.isFourthSubject) return s;
         return {
@@ -119,8 +219,12 @@ export default function App() {
             onChangeExamLevel={handleExamChange}
             group={group}
             onChangeGroup={handleGroupChange}
+            inputMode={inputMode}
+            onChangeInputMode={handleInputModeChange}
             subjects={subjects}
             onUpdateSubjectGrade={handleUpdateSubjectGrade}
+            onUpdateSubjectMarks={handleUpdateSubjectMarks}
+            onUpdateSubjectPaperMarks={handleUpdateSubjectPaperMarks}
             onChangeFourthSubjectOption={handleChangeFourthSubjectOption}
             result={result}
             showResult={showResult}

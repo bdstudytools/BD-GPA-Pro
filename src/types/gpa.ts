@@ -21,7 +21,7 @@ export type EducationBoard =
 
 export type LetterGrade = 'A+' | 'A' | 'A-' | 'B' | 'C' | 'D' | 'F';
 
-export type InputMode = 'grade' | 'marks';
+export type InputMode = 'grade' | 'marks' | 'point';
 
 export type SubjectCategory = 'compulsory' | 'group' | 'fourth';
 
@@ -35,6 +35,8 @@ export interface SubjectEntry {
   isTwoPaper?: boolean;
   grade: LetterGrade;
   marks: number | null;
+  paper1Marks?: number | null;
+  paper2Marks?: number | null;
 }
 
 export interface GpaCalculationResult {

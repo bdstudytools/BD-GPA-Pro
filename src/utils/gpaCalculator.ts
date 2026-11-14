@@ -1,6 +1,7 @@
 import { GRADING_SCALE } from '../data/curriculum';
 import {
   GpaCalculationResult,
+  InputMode,
   LetterGrade,
   SubjectEntry,
 } from '../types/gpa';
@@ -21,6 +22,16 @@ export function roundToTwo(value: number): number {
 
 export function gradeToGp(grade: LetterGrade): number {
   return GRADE_TO_GP_MAP[grade] ?? 0.0;
+}
+
+export function gpToLetterGrade(gp: number): LetterGrade {
+  if (gp >= 5.0) return 'A+';
+  if (gp >= 4.0) return 'A';
+  if (gp >= 3.5) return 'A-';
+  if (gp >= 3.0) return 'B';
+  if (gp >= 2.0) return 'C';
+  if (gp >= 1.0) return 'D';
+  return 'F';
 }
 
 export function marksToGrade(marks: number): { grade: LetterGrade; gp: number } {
@@ -46,36 +57,62 @@ export function gpToOverallLetterGrade(gpa: number): LetterGrade {
   return 'F';
 }
 
-export function isValidMark(mark: number | null): boolean {
-  return mark !== null && Number.isFinite(mark) && mark >= 0 && mark <= 100;
+export function isValidMark(mark: number | null | undefined): boolean {
+  return mark !== null && mark !== undefined && Number.isFinite(mark) && mark >= 0 && mark <= 100;
+}
+
+export function evaluateSubject(
+  subject: SubjectEntry,
+  inputMode: InputMode
+): { grade: LetterGrade; gp: number } {
+  if (inputMode === 'marks') {
+    if (subject.isTwoPaper) {
+      if (isValidMark(subject.paper1Marks) && isValidMark(subject.paper2Marks)) {
+        const combinedAverage =
+          ((subject.paper1Marks as number) + (subject.paper2Marks as number)) / 2;
+        return marksToGrade(combinedAverage);
+      }
+      return { grade: 'F', gp: 0.0 };
+    }
+    if (isValidMark(subject.marks)) {
+      return marksToGrade(subject.marks as number);
+    }
+    return { grade: 'F', gp: 0.0 };
+  }
+  return { grade: subject.grade, gp: gradeToGp(subject.grade) };
 }
 
 export function calculateGpa(
   subjects: SubjectEntry[],
-  inputMode: 'grade' | 'marks' = 'grade'
+  inputMode: InputMode = 'grade'
 ): GpaCalculationResult {
   const invalidSubjectIds: string[] = [];
   const incompleteSubjectIds: string[] = [];
 
   if (inputMode === 'marks') {
     for (const subject of subjects) {
-      if (subject.marks === null) {
-        incompleteSubjectIds.push(subject.id);
-      } else if (!Number.isFinite(subject.marks) || subject.marks < 0 || subject.marks > 100) {
-        invalidSubjectIds.push(subject.id);
+      if (subject.isTwoPaper) {
+        const p1 = subject.paper1Marks;
+        const p2 = subject.paper2Marks;
+        const p1Missing = p1 === null || p1 === undefined;
+        const p2Missing = p2 === null || p2 === undefined;
+        const p1Invalid = !p1Missing && (!Number.isFinite(p1) || p1 < 0 || p1 > 100);
+        const p2Invalid = !p2Missing && (!Number.isFinite(p2) || p2 < 0 || p2 > 100);
+
+        if (p1Invalid || p2Invalid) {
+          invalidSubjectIds.push(subject.id);
+        } else if (p1Missing || p2Missing) {
+          incompleteSubjectIds.push(subject.id);
+        }
+      } else {
+        if (subject.marks === null) {
+          incompleteSubjectIds.push(subject.id);
+        } else if (!Number.isFinite(subject.marks) || subject.marks < 0 || subject.marks > 100) {
+          invalidSubjectIds.push(subject.id);
+        }
       }
     }
   }
-
-  const getSubjectEvaluation = (subject: SubjectEntry): { grade: LetterGrade; gp: number } => {
-    if (inputMode === 'marks') {
-      if (subject.marks === null || !isValidMark(subject.marks)) {
-        return { grade: 'F', gp: 0.0 };
-      }
-      return marksToGrade(subject.marks);
-    }
-    return { grade: subject.grade, gp: gradeToGp(subject.grade) };
-  };
 
   const mainSubjects = subjects.filter((s) => !s.isFourthSubject);
   const fourthSubjects = subjects.filter((s) => s.isFourthSubject);
@@ -84,7 +121,7 @@ export function calculateGpa(
   let sumMainGradePoints = 0;
 
   for (const subject of mainSubjects) {
-    const evalResult = getSubjectEvaluation(subject);
+    const evalResult = evaluateSubject(subject, inputMode);
     if (evalResult.grade === 'F' || evalResult.gp === 0) {
       failedSubjects.push(subject);
     }
@@ -97,7 +134,7 @@ export function calculateGpa(
 
   if (fourthSubjects.length > 0) {
     for (const fourth of fourthSubjects) {
-      const evalResult = getSubjectEvaluation(fourth);
+      const evalResult = evaluateSubject(fourth, inputMode);
       fourthSubjectGradePoint += evalResult.gp;
       fourthSubjectBonus += Math.max(0, evalResult.gp - 2.0);
       if (evalResult.grade === 'F') {

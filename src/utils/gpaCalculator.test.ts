@@ -152,3 +152,27 @@ test('calculateGpa handles marks input mode and invalid/incomplete marks', () =>
   assert.equal(passRes.gpaWithoutFourth, 4.67);
   assert.equal(passRes.gpaWithFourth, 5.0);
 });
+
+test('calculateGpa evaluates HSC 2-paper 200-mark subjects and point mode accurately', () => {
+  const hscSubjects: SubjectEntry[] = [
+    { ...makeSubject('hsc-bangla', 'A+'), isTwoPaper: true, paper1Marks: 82, paper2Marks: 80 }, // avg 81 -> A+ (5.0)
+    { ...makeSubject('hsc-english', 'A'), isTwoPaper: true, paper1Marks: 78, paper2Marks: 72 }, // avg 75 -> A (4.0)
+    { ...makeSubject('hsc-ict', 'A+'), isTwoPaper: false, marks: 88 }, // single paper -> A+ (5.0)
+    { ...makeSubject('hsc-physics', 'A+'), isTwoPaper: true, paper1Marks: 85, paper2Marks: 75 }, // avg 80 -> A+ (5.0)
+    { ...makeSubject('hsc-chemistry', 'A+'), isTwoPaper: true, paper1Marks: 90, paper2Marks: 84 }, // avg 87 -> A+ (5.0)
+    { ...makeSubject('hsc-biology', 'A+'), isTwoPaper: true, paper1Marks: 81, paper2Marks: 79 }, // avg 80 -> A+ (5.0)
+    { ...makeSubject('hsc-higher-math', 'A+', true), isTwoPaper: true, paper1Marks: 84, paper2Marks: 86 }, // avg 85 -> A+ (+3.0 bonus)
+  ];
+
+  const marksRes = calculateGpa(hscSubjects, 'marks');
+  assert.equal(marksRes.hasMainFail, false);
+  assert.equal(marksRes.hasInvalidMarks, false);
+  assert.equal(marksRes.hasIncompleteMarks, false);
+  assert.equal(marksRes.gpaWithoutFourth, 4.83);
+  assert.equal(marksRes.gpaWithFourth, 5.0);
+
+  const pointRes = calculateGpa(hscSubjects, 'point');
+  assert.equal(pointRes.gpaWithoutFourth, 4.83);
+  assert.equal(pointRes.gpaWithFourth, 5.0);
+});
+

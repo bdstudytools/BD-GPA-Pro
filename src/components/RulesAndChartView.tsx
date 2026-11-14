@@ -20,19 +20,19 @@ export function RulesAndChartView({ lang }: RulesAndChartViewProps) {
     <div className="mx-auto max-w-6xl space-y-10 px-4 py-8 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="max-w-3xl">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl text-balance">
+        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl text-balance">
           {t.rulesHeading}
         </h1>
-        <p className="mt-2 text-base leading-relaxed text-slate-700 dark:text-slate-300">
+        <p className="mt-2 text-base leading-relaxed text-slate-600">
           {t.rulesSub}
         </p>
       </div>
 
       {/* Grading Scale Table */}
-      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-700/80 dark:bg-slate-800">
+      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-base">
-            <thead className="border-b border-slate-200 bg-slate-50 text-sm font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-200">
+            <thead className="border-b border-slate-200 bg-slate-50/70 text-sm font-bold text-slate-700">
               <tr>
                 <th scope="col" className="px-6 py-4">{t.colInterval}</th>
                 <th scope="col" className="px-6 py-4">{t.colLetter}</th>
@@ -40,32 +40,32 @@ export function RulesAndChartView({ lang }: RulesAndChartViewProps) {
                 <th scope="col" className="px-6 py-4">{t.colAssessment}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-700/80">
+            <tbody className="divide-y divide-slate-200">
               {GRADING_SCALE.map((row) => (
                 <tr
                   key={row.grade}
-                  className="transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-700/30"
+                  className="transition-colors hover:bg-slate-50/70"
                 >
-                  <td className="px-6 py-3.5 tabular-nums font-bold text-slate-900 dark:text-white">
+                  <td className="px-6 py-3.5 tabular-nums font-bold text-slate-900">
                     {row.interval}
                   </td>
                   <td className="px-6 py-3.5">
                     <span
                       className={`tabular-nums text-lg font-extrabold ${
                         row.grade === 'F'
-                          ? 'text-red-600 dark:text-red-400'
+                          ? 'text-red-600'
                           : row.grade === 'A+'
-                            ? 'text-emerald-600 dark:text-emerald-400'
-                            : 'text-slate-900 dark:text-white'
+                            ? 'text-sky-600'
+                            : 'text-slate-900'
                       }`}
                     >
                       {row.grade}
                     </span>
                   </td>
-                  <td className="px-6 py-3.5 tabular-nums font-bold text-slate-900 dark:text-white">
+                  <td className="px-6 py-3.5 tabular-nums font-bold text-slate-900">
                     {row.gp.toFixed(2)}
                   </td>
-                  <td className="px-6 py-3.5 font-medium text-slate-700 dark:text-slate-200">
+                  <td className="px-6 py-3.5 font-medium text-slate-700">
                     {lang === 'bn' ? row.remarkBn : row.remarkEn}
                   </td>
                 </tr>
@@ -78,11 +78,11 @@ export function RulesAndChartView({ lang }: RulesAndChartViewProps) {
       {/* 4th Subject Bonus Point Explanation + Interactive Example */}
       <section className="grid gap-8 lg:grid-cols-12">
         <div className="space-y-4 lg:col-span-7">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white text-balance">
+          <h2 className="text-xl font-bold text-slate-900 text-balance">
             {t.fourthRuleHeading}
           </h2>
 
-          <div className="space-y-4 text-base leading-relaxed text-slate-700 dark:text-slate-200">
+          <div className="space-y-4 text-base leading-relaxed text-slate-700">
             <p>
               {lang === 'bn'
                 ? 'বাংলাদেশ শিক্ষা বোর্ডের (এসএসসি, দাখিল, এইচএসসি ও আলিম) নিয়মানুযায়ী, ৪র্থ বিষয় বা ঐচ্ছিক বিষয়ের প্রাপ্ত গ্রেড পয়েন্ট থেকে ২.০০ বাদ দিয়ে অবশিষ্ট পয়েন্টকে বোনাস হিসেবে গণনা করা হয় এবং মূল বিষয়গুলোর মোট পয়েন্টের সাথে যোগ করে গড় নির্ণয় করা হয় (সর্বোচ্চ ৫.০০)।'
@@ -91,7 +91,7 @@ export function RulesAndChartView({ lang }: RulesAndChartViewProps) {
 
             <ul className="space-y-3">
               <li className="flex items-start gap-2.5">
-                <span className="mt-0.5 tabular-nums text-sm font-bold text-emerald-700 dark:text-emerald-400">
+                <span className="mt-0.5 tabular-nums text-sm font-bold text-sky-600">
                   01.
                 </span>
                 <span>
@@ -101,7 +101,7 @@ export function RulesAndChartView({ lang }: RulesAndChartViewProps) {
                 </span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="mt-0.5 tabular-nums text-sm font-bold text-emerald-700 dark:text-emerald-400">
+                <span className="mt-0.5 tabular-nums text-sm font-bold text-sky-600">
                   02.
                 </span>
                 <span>
@@ -111,7 +111,7 @@ export function RulesAndChartView({ lang }: RulesAndChartViewProps) {
                 </span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="mt-0.5 tabular-nums text-sm font-bold text-emerald-700 dark:text-emerald-400">
+                <span className="mt-0.5 tabular-nums text-sm font-bold text-sky-600">
                   03.
                 </span>
                 <span>
@@ -124,12 +124,12 @@ export function RulesAndChartView({ lang }: RulesAndChartViewProps) {
           </div>
         </div>
 
-        {/* Interactive Bonus Simulator Card */}
-        <div className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-700/80 dark:bg-slate-800 lg:col-span-5">
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">
+        {/* Interactive Bonus Example Card */}
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs lg:col-span-5">
+          <h3 className="text-base font-bold text-slate-900">
             {lang === 'bn' ? 'লাইভ ৪র্থ বিষয় বোনাস উদাহরণ' : 'Interactive 4th Subject Example'}
           </h3>
-          <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-300">
+          <p className="mt-1.5 text-sm text-slate-600">
             {lang === 'bn'
               ? 'ধরুন আপনার 6টি মূল বিষয়ের মোট পয়েন্ট 28.00 (গড় জিপিএ 4.67)। ৪র্থ বিষয়ের গ্রেড পরিবর্তন করে দেখুন:'
               : 'Suppose 6 main subjects total 28.00 points (base GPA 4.67). Change the 4th subject grade below:'}
@@ -138,7 +138,7 @@ export function RulesAndChartView({ lang }: RulesAndChartViewProps) {
           <div className="mt-5">
             <label
               htmlFor="sample-fourth-grade"
-              className="block text-sm font-semibold text-slate-800 dark:text-slate-200"
+              className="block text-sm font-semibold text-slate-800"
             >
               {lang === 'bn' ? '৪র্থ বিষয়ের গ্রেড নির্বাচন করুন' : 'Select 4th Subject Grade'}
             </label>
@@ -161,8 +161,8 @@ export function RulesAndChartView({ lang }: RulesAndChartViewProps) {
                   onClick={() => setSampleFourthGp(opt.gp)}
                   className={`rounded-lg border px-2 py-2 tabular-nums text-xs font-bold transition-colors whitespace-nowrap ${
                     sampleFourthGp === opt.gp
-                      ? 'border-blue-600 bg-blue-600 text-white'
-                      : 'border-slate-300 bg-slate-50 text-slate-800 hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-700'
+                      ? 'border-sky-600 bg-sky-600 text-white shadow-xs'
+                      : 'border-slate-300 bg-white text-slate-800 hover:bg-slate-50'
                   }`}
                 >
                   {opt.label}
@@ -171,28 +171,28 @@ export function RulesAndChartView({ lang }: RulesAndChartViewProps) {
             </div>
           </div>
 
-          <div className="mt-6 space-y-3 border-t border-slate-200 pt-5 text-base dark:border-slate-700">
+          <div className="mt-6 space-y-3 border-t border-slate-200 pt-5 text-base">
             <div className="flex items-center justify-between">
-              <span className="text-slate-700 dark:text-slate-200">
+              <span className="text-slate-700">
                 {lang === 'bn' ? 'মূল বিষয়ের গড় জিপিএ' : 'Base GPA (Without 4th)'}
               </span>
-              <span className="tabular-nums font-bold text-slate-900 dark:text-white">
+              <span className="tabular-nums font-bold text-slate-900">
                 {sampleMainAvg.toFixed(2)}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-700 dark:text-slate-200">
+              <span className="text-slate-700">
                 {lang === 'bn' ? '৪র্থ বিষয়ের বোনাস' : '4th Subject Bonus'}
               </span>
-              <span className="tabular-nums font-bold text-blue-700 dark:text-blue-400">
+              <span className="tabular-nums font-bold text-sky-600">
                 +{sampleBonus.toFixed(2)}
               </span>
             </div>
-            <div className="flex items-center justify-between border-t border-slate-100 pt-3 dark:border-slate-700/60">
-              <span className="font-bold text-slate-900 dark:text-white">
+            <div className="flex items-center justify-between border-t border-slate-100 pt-3">
+              <span className="font-bold text-slate-900">
                 {lang === 'bn' ? 'চূড়ান্ত জিপিএ' : 'Final GPA'}
               </span>
-              <span className="tabular-nums text-2xl font-extrabold text-emerald-700 dark:text-emerald-400">
+              <span className="tabular-nums text-2xl font-extrabold text-slate-900">
                 {sampleFinalGpa.toFixed(2)}
               </span>
             </div>

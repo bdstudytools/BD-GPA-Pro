@@ -696,6 +696,8 @@ export function getSubjectsForConfig(
     isTwoPaper: item.isTwoPaper,
     grade: item.defaultGrade,
     marks: item.defaultMarks,
+    paper1Marks: item.isTwoPaper ? item.defaultMarks : undefined,
+    paper2Marks: item.isTwoPaper ? item.defaultMarks : undefined,
   }));
 }
 
@@ -718,12 +720,13 @@ export const UI_TEXT = {
       humanities: 'Humanities',
     },
     boardLabel: 'Education Board',
-    inputModeLabel: 'Input Mode',
-    byGrade: 'Letter Grade',
-    byMarks: 'Marks (0–100)',
-    subjectsHeading: 'Subject Grades',
+    gradeFormatLabel: 'Grade Format',
+    formatGrade: 'Grade',
+    formatMarks: 'Marks',
+    formatPoint: 'Point',
+    subjectsHeading: 'Subject Grades & Marks',
     subjectsSub:
-      'Select your letter grade for each subject and choose your 4th subject from the dropdown.',
+      'Choose Grade, Marks, or Point format above and select your 4th subject from the dropdown.',
     roleCompulsory: 'Compulsory',
     roleGroup: 'Main Group',
     roleFourth: '4th Subject',
@@ -735,7 +738,7 @@ export const UI_TEXT = {
     calculateGpaBtn: 'Calculate GPA',
     calculatePromptTitle: 'Ready to Calculate',
     calculatePromptDesc:
-      'Select your grades on the left, then click "Calculate GPA" to see your result.',
+      'Set your grades, marks, or points on the left, then click "Calculate GPA" to see your result.',
     goldenBadge: 'Golden A+ Achieved',
     standardAPlusBadge: 'A+ Achieved',
     failedStatus: 'Failed (F / GPA 0.00)',
@@ -744,6 +747,8 @@ export const UI_TEXT = {
       'Under Bangladesh Education Board rules, an F in any compulsory or main group subject results in overall GPA 0.00. Need improvement in:',
     fourthFailNote:
       'Your 4th subject has F (0.00). Per board rules, it adds +0.00 bonus without failing your overall result.',
+    invalidMarksNotice: 'Please enter valid marks between 0 and 100 per paper for highlighted subjects.',
+    incompleteMarksNotice: 'Enter marks (0–100 per paper) for all subjects to calculate GPA.',
     rulesHeading: 'Official Bangladesh Education Board Grading Scale',
     rulesSub:
       'Standard NCTB evaluation intervals applied across Dhaka, Rajshahi, Comilla, Jessore, Chattogram, Barishal, Sylhet, Dinajpur, Mymensingh, Madrasah, and Technical boards.',
@@ -771,12 +776,13 @@ export const UI_TEXT = {
       humanities: 'মানবিক',
     },
     boardLabel: 'শিক্ষা বোর্ড',
-    inputModeLabel: 'ইনপুট মাধ্যম',
-    byGrade: 'লেটার গ্রেড',
-    byMarks: 'নম্বর (০–১০০)',
+    gradeFormatLabel: 'গ্রেড ফরম্যাট',
+    formatGrade: 'গ্রেড',
+    formatMarks: 'নম্বর',
+    formatPoint: 'পয়েন্ট',
     subjectsHeading: 'বিষয়ভিত্তিক গ্রেড ও নম্বর',
     subjectsSub:
-      'লেটার গ্রেড নির্বাচন করুন অথবা ০–১০০ নম্বর লিখুন এবং ড্রপডাউন থেকে ৪র্থ বিষয় নির্বাচন করুন।',
+      'উপর থেকে গ্রেড, নম্বর বা পয়েন্ট ফরম্যাট বেছে নিন এবং ড্রপডাউন থেকে ৪র্থ বিষয় নির্বাচন করুন।',
     roleCompulsory: 'আবশ্যিক',
     roleGroup: 'মূল বিষয়',
     roleFourth: '৪র্থ বিষয়',
@@ -788,16 +794,16 @@ export const UI_TEXT = {
     calculateGpaBtn: 'ফলাফল দেখুন',
     calculatePromptTitle: 'জিপিএ হিসাব করতে প্রস্তুত',
     calculatePromptDesc:
-      'বাম পাশে বিষয়গুলোর গ্রেড বা নম্বর দিয়ে "ফলাফল দেখুন" বাটনে ক্লিক করুন।',
+      'বাম পাশে বিষয়গুলোর গ্রেড, নম্বর বা পয়েন্ট দিয়ে "ফলাফল দেখুন" বাটনে ক্লিক করুন।',
     goldenBadge: 'গোল্ডেন A+ অর্জিত',
     standardAPlusBadge: 'A+ অর্জিত',
     failedStatus: 'অকৃতকার্য (F / GPA 0.00)',
     failAlertTitle: 'মূল বিষয়ে অকৃতকার্য (F) শনাক্ত হয়েছে',
     failAlertBody:
-      'বাংলাদেশ শিক্ষা বোর্ডের নিয়মানুযায়ী, যেকোনো আবশ্যিক বা মূল বিষয়ে F (০–৩২ নম্বর) পেলে মোট জিপিএ ০.০০ হয়। উন্নতি প্রয়োজন:',
+      'বাংলাদেশ শিক্ষা বোর্ডের নিয়মানুযায়ী, যেকোনো আবশ্যিক বা মূল বিষয়ে F পেলে মোট জিপিএ ০.০০ হয়। উন্নতি প্রয়োজন:',
     fourthFailNote:
       'আপনার ৪র্থ বিষয়ে F (০.০০) এসেছে। বোর্ডের নিয়মে এটি বোনাস হিসেবে ০.০০ যোগ করবে এবং মূল ফলাফলে ফেল হবে না।',
-    invalidMarksNotice: 'লাল চিহ্নিত বিষয়ে অনুগ্রহ করে ০ থেকে ১০০ এর মধ্যে সঠিক নম্বর দিন।',
+    invalidMarksNotice: 'লাল চিহ্নিত বিষয়ে প্রতি পত্রে ০ থেকে ১০০ এর মধ্যে সঠিক নম্বর দিন।',
     incompleteMarksNotice: 'সঠিক জিপিএ হিসাবের জন্য সব বিষয়ের নম্বর দিন।',
     rulesHeading: 'বাংলাদেশ শিক্ষা বোর্ডের অফিসিয়াল গ্রেডিং স্কেল',
     rulesSub:
