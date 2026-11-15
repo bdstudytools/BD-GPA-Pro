@@ -198,18 +198,18 @@ export function CalculatorWorkspace({
                   evalItem.grade === 'F';
                 const displayName = lang === 'bn' ? subject.nameBn : subject.nameEn;
 
+                const maxSingleMarks = subject.maxMarks === 50 ? 50 : 100;
                 const baseRole =
                   subject.category === 'compulsory' ? t.roleCompulsory : t.roleGroup;
-                const roleLabel =
-                  examLevel === 'hsc'
-                    ? `${baseRole} · ${
-                        subject.isTwoPaper ? t.twoPaperSuffix : t.singlePaperSuffix
-                      }`
-                    : baseRole;
+                const roleLabel = subject.isTwoPaper
+                  ? `${baseRole} · ${t.twoPaperSuffix}`
+                  : subject.maxMarks === 50
+                    ? `${baseRole} · ${t.fiftyMarksSuffix}`
+                    : `${baseRole} · ${t.singlePaperSuffix}`;
 
                 const marksReady = subject.isTwoPaper
                   ? isValidMark(subject.paper1Marks) && isValidMark(subject.paper2Marks)
-                  : isValidMark(subject.marks);
+                  : isValidMark(subject.marks, maxSingleMarks);
 
                 return (
                   <div
@@ -226,9 +226,9 @@ export function CalculatorWorkspace({
                       {subject.isFourthSubject ? (
                         <div className="space-y-1.5">
                           <div className="text-xs font-bold tracking-wide text-sky-700">
-                            {examLevel === 'hsc'
-                              ? `${t.roleFourth} · ${t.twoPaperSuffix}`
-                              : t.roleFourth}
+                            {`${t.roleFourth} · ${
+                              examLevel === 'hsc' ? t.twoPaperSuffix : t.singlePaperSuffix
+                            }`}
                           </div>
                           <div>
                             <label htmlFor="fourth-subject-select" className="sr-only">
@@ -417,7 +417,7 @@ export function CalculatorWorkspace({
                                 id={`marks-${subject.id}`}
                                 type="number"
                                 min={0}
-                                max={100}
+                                max={maxSingleMarks}
                                 value={subject.marks === null ? '' : subject.marks}
                                 onChange={(e) => {
                                   const raw = e.target.value;
@@ -426,7 +426,7 @@ export function CalculatorWorkspace({
                                     raw === '' ? null : Number(raw)
                                   );
                                 }}
-                                placeholder="0–100"
+                                placeholder={maxSingleMarks === 50 ? '0–50' : '0–100'}
                                 className={`min-h-[42px] w-24 rounded-lg border px-3 py-1.5 text-right tabular-nums text-sm font-bold focus:outline-none ${
                                   isInvalidRow
                                     ? 'border-red-500 bg-red-50 text-red-700'

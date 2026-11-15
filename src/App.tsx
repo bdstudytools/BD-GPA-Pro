@@ -11,7 +11,12 @@ import {
   StudyGroup,
   SubjectEntry,
 } from './types/gpa';
-import { calculateGpa, isValidMark, marksToGrade } from './utils/gpaCalculator';
+import {
+  calculateGpa,
+  evaluateSubject,
+  isValidMark,
+  marksToGrade,
+} from './utils/gpaCalculator';
 
 const GRADE_REPRESENTATIVE_MARKS: Record<LetterGrade, number> = {
   'A+': 85,
@@ -62,9 +67,11 @@ export default function App() {
               paper2Marks: isValidMark(s.paper2Marks) ? s.paper2Marks : fallback,
             };
           }
+          const maxLimit = s.maxMarks === 50 ? 50 : 100;
+          const scaledFallback = maxLimit === 50 ? Math.round(fallback / 2) : fallback;
           return {
             ...s,
-            marks: isValidMark(s.marks) ? s.marks : fallback,
+            marks: isValidMark(s.marks, maxLimit) ? s.marks : scaledFallback,
           };
         })
       );
@@ -72,11 +79,11 @@ export default function App() {
       setSubjects((prev) =>
         prev.map((s) => {
           if (s.isTwoPaper && isValidMark(s.paper1Marks) && isValidMark(s.paper2Marks)) {
-            const avg = ((s.paper1Marks as number) + (s.paper2Marks as number)) / 2;
-            return { ...s, grade: marksToGrade(avg).grade };
+            return { ...s, grade: evaluateSubject(s, 'marks').grade };
           }
-          if (!s.isTwoPaper && isValidMark(s.marks)) {
-            return { ...s, grade: marksToGrade(s.marks as number).grade };
+          const maxLimit = s.maxMarks === 50 ? 50 : 100;
+          if (!s.isTwoPaper && isValidMark(s.marks, maxLimit)) {
+            return { ...s, grade: evaluateSubject(s, 'marks').grade };
           }
           return s;
         })
@@ -87,19 +94,19 @@ export default function App() {
   };
 
   const handleUpdateSubjectGrade = (id: string, grade: LetterGrade) => {
-    const rep = GRADE_REPRESENTATIVE_MARKS[grade];
+    const baseRep = GRADE_REPRESENTATIVE_MARKS[grade];
     setSubjects((prev) =>
-      prev.map((s) =>
-        s.id === id
-          ? {
-              ...s,
-              grade,
-              marks: rep,
-              paper1Marks: s.isTwoPaper ? rep : s.paper1Marks,
-              paper2Marks: s.isTwoPaper ? rep : s.paper2Marks,
-            }
-          : s
-      )
+      prev.map((s) => {
+        if (s.id !== id) return s;
+        const rep = s.maxMarks === 50 ? Math.round(baseRep / 2) : baseRep;
+        return {
+          ...s,
+          grade,
+          marks: rep,
+          paper1Marks: s.isTwoPaper ? baseRep : s.paper1Marks,
+          paper2Marks: s.isTwoPaper ? baseRep : s.paper2Marks,
+        };
+      })
     );
     setShowResult(false);
   };
@@ -111,10 +118,13 @@ export default function App() {
         if (marks === null) {
           return { ...s, marks: null };
         }
+        const maxLimit = s.maxMarks === 50 ? 50 : 100;
+        const valid = isValidMark(marks, maxLimit);
+        const normalized = maxLimit === 50 ? marks * 2 : marks;
         return {
           ...s,
           marks,
-          grade: isValidMark(marks) ? marksToGrade(marks).grade : s.grade,
+          grade: valid ? marksToGrade(normalized).grade : s.grade,
         };
       })
     );
@@ -191,6 +201,7 @@ export default function App() {
           category: 'fourth',
           isFourthSubject: true,
           isTwoPaper: examLevel === 'hsc',
+          maxMarks: examLevel === 'hsc' ? 200 : 100,
         };
       });
     });

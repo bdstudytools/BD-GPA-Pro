@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   calculateGpa,
+  evaluateSubject,
   gradeToGp,
   marksToGrade,
 } from './gpaCalculator';
@@ -175,4 +176,25 @@ test('calculateGpa evaluates HSC 2-paper 200-mark subjects and point mode accura
   assert.equal(pointRes.gpaWithoutFourth, 4.83);
   assert.equal(pointRes.gpaWithFourth, 5.0);
 });
+
+test('calculateGpa evaluates SSC ICT 50-mark scale and validates max 50 marks', () => {
+  const ict = (marks: number): SubjectEntry => ({
+    ...makeSubject('ssc-ict', 'A+', false, marks),
+    maxMarks: 50,
+  });
+
+  assert.deepEqual(evaluateSubject(ict(50), 'marks'), { grade: 'A+', gp: 5.0 });
+  assert.deepEqual(evaluateSubject(ict(40), 'marks'), { grade: 'A+', gp: 5.0 });
+  assert.deepEqual(evaluateSubject(ict(35), 'marks'), { grade: 'A', gp: 4.0 });
+  assert.deepEqual(evaluateSubject(ict(30), 'marks'), { grade: 'A-', gp: 3.5 });
+  assert.deepEqual(evaluateSubject(ict(25), 'marks'), { grade: 'B', gp: 3.0 });
+  assert.deepEqual(evaluateSubject(ict(20), 'marks'), { grade: 'C', gp: 2.0 });
+  assert.deepEqual(evaluateSubject(ict(17), 'marks'), { grade: 'D', gp: 1.0 });
+  assert.deepEqual(evaluateSubject(ict(16), 'marks'), { grade: 'F', gp: 0.0 });
+
+  const invalidRes = calculateGpa([ict(60), makeSubject('ssc-math', 'A+', false, 85)], 'marks');
+  assert.equal(invalidRes.hasInvalidMarks, true);
+  assert.deepEqual(invalidRes.invalidSubjectIds, ['ssc-ict']);
+});
+
 

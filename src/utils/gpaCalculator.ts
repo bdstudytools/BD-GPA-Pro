@@ -57,8 +57,17 @@ export function gpToOverallLetterGrade(gpa: number): LetterGrade {
   return 'F';
 }
 
-export function isValidMark(mark: number | null | undefined): boolean {
-  return mark !== null && mark !== undefined && Number.isFinite(mark) && mark >= 0 && mark <= 100;
+export function isValidMark(
+  mark: number | null | undefined,
+  maxLimit = 100
+): boolean {
+  return (
+    mark !== null &&
+    mark !== undefined &&
+    Number.isFinite(mark) &&
+    mark >= 0 &&
+    mark <= maxLimit
+  );
 }
 
 export function evaluateSubject(
@@ -67,15 +76,18 @@ export function evaluateSubject(
 ): { grade: LetterGrade; gp: number } {
   if (inputMode === 'marks') {
     if (subject.isTwoPaper) {
-      if (isValidMark(subject.paper1Marks) && isValidMark(subject.paper2Marks)) {
+      if (isValidMark(subject.paper1Marks, 100) && isValidMark(subject.paper2Marks, 100)) {
         const combinedAverage =
           ((subject.paper1Marks as number) + (subject.paper2Marks as number)) / 2;
         return marksToGrade(combinedAverage);
       }
       return { grade: 'F', gp: 0.0 };
     }
-    if (isValidMark(subject.marks)) {
-      return marksToGrade(subject.marks as number);
+    const maxLimit = subject.maxMarks === 50 ? 50 : 100;
+    if (isValidMark(subject.marks, maxLimit)) {
+      const percentage =
+        maxLimit === 50 ? (subject.marks as number) * 2 : (subject.marks as number);
+      return marksToGrade(percentage);
     }
     return { grade: 'F', gp: 0.0 };
   }
@@ -105,9 +117,10 @@ export function calculateGpa(
           incompleteSubjectIds.push(subject.id);
         }
       } else {
+        const maxLimit = subject.maxMarks === 50 ? 50 : 100;
         if (subject.marks === null) {
           incompleteSubjectIds.push(subject.id);
-        } else if (!Number.isFinite(subject.marks) || subject.marks < 0 || subject.marks > 100) {
+        } else if (!Number.isFinite(subject.marks) || subject.marks < 0 || subject.marks > maxLimit) {
           invalidSubjectIds.push(subject.id);
         }
       }

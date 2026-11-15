@@ -1,6 +1,6 @@
 {
   "name": "BD GPA Pro",
-  "description": "Smart SSC, HSC, Dakhil & Alim GPA Calculator and 4th Subject Rules guide for Bangladeshi Education Board students.",
+  "description": "Smart SSC & HSC GPA Calculator and 4th Subject Rules guide for Bangladeshi Education Board students.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

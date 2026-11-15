@@ -34,10 +34,12 @@ export function RulesAndChartView({ lang }: RulesAndChartViewProps) {
           <table className="w-full text-left text-base">
             <thead className="border-b border-slate-200 bg-slate-50/70 text-sm font-bold text-slate-700">
               <tr>
-                <th scope="col" className="px-6 py-4">{t.colInterval}</th>
-                <th scope="col" className="px-6 py-4">{t.colLetter}</th>
-                <th scope="col" className="px-6 py-4">{t.colPoint}</th>
-                <th scope="col" className="px-6 py-4">{t.colAssessment}</th>
+                <th scope="col" className="px-5 py-4">{t.colInterval}</th>
+                <th scope="col" className="px-5 py-4">{t.colInterval200}</th>
+                <th scope="col" className="px-5 py-4">{t.colInterval50}</th>
+                <th scope="col" className="px-5 py-4">{t.colLetter}</th>
+                <th scope="col" className="px-5 py-4">{t.colPoint}</th>
+                <th scope="col" className="px-5 py-4">{t.colAssessment}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -46,10 +48,16 @@ export function RulesAndChartView({ lang }: RulesAndChartViewProps) {
                   key={row.grade}
                   className="transition-colors hover:bg-slate-50/70"
                 >
-                  <td className="px-6 py-3.5 tabular-nums font-bold text-slate-900">
+                  <td className="px-5 py-3.5 tabular-nums font-bold text-slate-900 whitespace-nowrap">
                     {row.interval}
                   </td>
-                  <td className="px-6 py-3.5">
+                  <td className="px-5 py-3.5 tabular-nums font-bold text-slate-900 whitespace-nowrap">
+                    {row.interval200}
+                  </td>
+                  <td className="px-5 py-3.5 tabular-nums font-bold text-slate-900 whitespace-nowrap">
+                    {row.interval50}
+                  </td>
+                  <td className="px-5 py-3.5">
                     <span
                       className={`tabular-nums text-lg font-extrabold ${
                         row.grade === 'F'
@@ -62,10 +70,10 @@ export function RulesAndChartView({ lang }: RulesAndChartViewProps) {
                       {row.grade}
                     </span>
                   </td>
-                  <td className="px-6 py-3.5 tabular-nums font-bold text-slate-900">
+                  <td className="px-5 py-3.5 tabular-nums font-bold text-slate-900">
                     {row.gp.toFixed(2)}
                   </td>
-                  <td className="px-6 py-3.5 font-medium text-slate-700">
+                  <td className="px-5 py-3.5 font-medium text-slate-700">
                     {lang === 'bn' ? row.remarkBn : row.remarkEn}
                   </td>
                 </tr>
@@ -85,8 +93,8 @@ export function RulesAndChartView({ lang }: RulesAndChartViewProps) {
           <div className="space-y-4 text-base leading-relaxed text-slate-700">
             <p>
               {lang === 'bn'
-                ? 'বাংলাদেশ শিক্ষা বোর্ডের (এসএসসি, দাখিল, এইচএসসি ও আলিম) নিয়মানুযায়ী, ৪র্থ বিষয় বা ঐচ্ছিক বিষয়ের প্রাপ্ত গ্রেড পয়েন্ট থেকে ২.০০ বাদ দিয়ে অবশিষ্ট পয়েন্টকে বোনাস হিসেবে গণনা করা হয় এবং মূল বিষয়গুলোর মোট পয়েন্টের সাথে যোগ করে গড় নির্ণয় করা হয় (সর্বোচ্চ ৫.০০)।'
-                : 'Under the Bangladesh Education Board (SSC, Dakhil, HSC & Alim) system, 2.00 points are deducted from your 4th (optional) subject Grade Point. Any remainder above 2.00 is added as a bonus to your main subjects sum and averaged over the number of main subjects (capped at 5.00).'}
+                ? 'বাংলাদেশ শিক্ষা বোর্ডের (এসএসসি ও এইচএসসি) নিয়মানুযায়ী, ৪র্থ বিষয় বা ঐচ্ছিক বিষয়ের প্রাপ্ত গ্রেড পয়েন্ট থেকে ২.০০ বাদ দিয়ে অবশিষ্ট পয়েন্টকে বোনাস হিসেবে গণনা করা হয় এবং মূল বিষয়গুলোর মোট পয়েন্টের সাথে যোগ করে গড় নির্ণয় করা হয় (সর্বোচ্চ ৫.০০)।'
+                : 'Under the Bangladesh Education Board (SSC & HSC) system, 2.00 points are deducted from your 4th (optional) subject Grade Point. Any remainder above 2.00 is added as a bonus to your main subjects sum and averaged over the number of main subjects (capped at 5.00).'}
             </p>
 
             <ul className="space-y-3">

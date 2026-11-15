@@ -33,6 +33,7 @@ export interface SubjectEntry {
   category: SubjectCategory;
   isFourthSubject: boolean;
   isTwoPaper?: boolean;
+  maxMarks?: 50 | 100 | 200;
   grade: LetterGrade;
   marks: number | null;
   paper1Marks?: number | null;

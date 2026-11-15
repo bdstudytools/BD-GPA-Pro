@@ -28,6 +28,8 @@ export const EDUCATION_BOARDS: BoardInfo[] = [
 
 export interface GradingScaleRow {
   interval: string;
+  interval200: string;
+  interval50: string;
   minMarks: number;
   maxMarks: number;
   grade: LetterGrade;
@@ -39,6 +41,8 @@ export interface GradingScaleRow {
 export const GRADING_SCALE: GradingScaleRow[] = [
   {
     interval: '80 – 100',
+    interval200: '160 – 200',
+    interval50: '40 – 50',
     minMarks: 80,
     maxMarks: 100,
     grade: 'A+',
@@ -48,6 +52,8 @@ export const GRADING_SCALE: GradingScaleRow[] = [
   },
   {
     interval: '70 – 79',
+    interval200: '140 – 159',
+    interval50: '35 – 39',
     minMarks: 70,
     maxMarks: 79,
     grade: 'A',
@@ -57,6 +63,8 @@ export const GRADING_SCALE: GradingScaleRow[] = [
   },
   {
     interval: '60 – 69',
+    interval200: '120 – 139',
+    interval50: '30 – 34',
     minMarks: 60,
     maxMarks: 69,
     grade: 'A-',
@@ -66,6 +74,8 @@ export const GRADING_SCALE: GradingScaleRow[] = [
   },
   {
     interval: '50 – 59',
+    interval200: '100 – 119',
+    interval50: '25 – 29',
     minMarks: 50,
     maxMarks: 59,
     grade: 'B',
@@ -75,6 +85,8 @@ export const GRADING_SCALE: GradingScaleRow[] = [
   },
   {
     interval: '40 – 49',
+    interval200: '80 – 99',
+    interval50: '20 – 24',
     minMarks: 40,
     maxMarks: 49,
     grade: 'C',
@@ -84,6 +96,8 @@ export const GRADING_SCALE: GradingScaleRow[] = [
   },
   {
     interval: '33 – 39',
+    interval200: '66 – 79',
+    interval50: '17 – 19',
     minMarks: 33,
     maxMarks: 39,
     grade: 'D',
@@ -93,6 +107,8 @@ export const GRADING_SCALE: GradingScaleRow[] = [
   },
   {
     interval: '0 – 32',
+    interval200: '0 – 65',
+    interval50: '0 – 16',
     minMarks: 0,
     maxMarks: 32,
     grade: 'F',
@@ -176,6 +192,7 @@ interface SubjectTemplate {
   nameBn: string;
   category: 'compulsory' | 'group' | 'fourth';
   isTwoPaper?: boolean;
+  maxMarks?: 50 | 100 | 200;
   defaultGrade: LetterGrade;
   defaultMarks: number;
 }
@@ -183,19 +200,23 @@ interface SubjectTemplate {
 const SSC_COMPULSORY_GENERAL: SubjectTemplate[] = [
   {
     id: 'ssc-bangla',
-    code: '101',
+    code: '101–102',
     nameEn: 'Bangla',
     nameBn: 'বাংলা',
     category: 'compulsory',
+    isTwoPaper: true,
+    maxMarks: 200,
     defaultGrade: 'A+',
     defaultMarks: 84,
   },
   {
     id: 'ssc-english',
-    code: '107',
+    code: '107–108',
     nameEn: 'English',
     nameBn: 'ইংরেজি',
     category: 'compulsory',
+    isTwoPaper: true,
+    maxMarks: 200,
     defaultGrade: 'A',
     defaultMarks: 76,
   },
@@ -205,6 +226,7 @@ const SSC_COMPULSORY_GENERAL: SubjectTemplate[] = [
     nameEn: 'Mathematics',
     nameBn: 'গণিত',
     category: 'compulsory',
+    maxMarks: 100,
     defaultGrade: 'A+',
     defaultMarks: 88,
   },
@@ -214,8 +236,9 @@ const SSC_COMPULSORY_GENERAL: SubjectTemplate[] = [
     nameEn: 'Information & Communication Technology',
     nameBn: 'তথ্য ও যোগাযোগ প্রযুক্তি',
     category: 'compulsory',
+    maxMarks: 50,
     defaultGrade: 'A+',
-    defaultMarks: 85,
+    defaultMarks: 43,
   },
   {
     id: 'ssc-religion',
@@ -248,81 +271,6 @@ const SSC_GENERAL_SCIENCE: SubjectTemplate = {
   defaultMarks: 74,
 };
 
-const DAKHIL_COMPULSORY: SubjectTemplate[] = [
-  {
-    id: 'dakhil-quran',
-    code: '101',
-    nameEn: 'Quran Mazid & Tajvid',
-    nameBn: 'কুরআন মাজিদ ও তাজভিদ',
-    category: 'compulsory',
-    defaultGrade: 'A+',
-    defaultMarks: 85,
-  },
-  {
-    id: 'dakhil-hadith',
-    code: '102',
-    nameEn: 'Hadith Sharif',
-    nameBn: 'হাদিস শরিফ',
-    category: 'compulsory',
-    defaultGrade: 'A+',
-    defaultMarks: 82,
-  },
-  {
-    id: 'dakhil-arabic',
-    code: '103',
-    nameEn: 'Arabic (1st & 2nd)',
-    nameBn: 'আরবি (১ম ও ২য় পত্র)',
-    category: 'compulsory',
-    defaultGrade: 'A',
-    defaultMarks: 76,
-  },
-  {
-    id: 'dakhil-bangla',
-    code: '106',
-    nameEn: 'Bangla',
-    nameBn: 'বাংলা',
-    category: 'compulsory',
-    defaultGrade: 'A+',
-    defaultMarks: 83,
-  },
-  {
-    id: 'dakhil-english',
-    code: '107',
-    nameEn: 'English',
-    nameBn: 'ইংরেজি',
-    category: 'compulsory',
-    defaultGrade: 'A',
-    defaultMarks: 74,
-  },
-  {
-    id: 'dakhil-math',
-    code: '108',
-    nameEn: 'Mathematics',
-    nameBn: 'গণিত',
-    category: 'compulsory',
-    defaultGrade: 'A+',
-    defaultMarks: 86,
-  },
-  {
-    id: 'dakhil-fiqh',
-    code: '105',
-    nameEn: 'Aqaid & Fiqh',
-    nameBn: 'আকাইদ ও ফিকহ',
-    category: 'compulsory',
-    defaultGrade: 'A+',
-    defaultMarks: 84,
-  },
-  {
-    id: 'dakhil-ict',
-    code: '140',
-    nameEn: 'Information & Communication Technology',
-    nameBn: 'তথ্য ও যোগাযোগ প্রযুক্তি',
-    category: 'compulsory',
-    defaultGrade: 'A+',
-    defaultMarks: 85,
-  },
-];
-
 const HSC_COMPULSORY_GENERAL: SubjectTemplate[] = [
   {
     id: 'hsc-bangla',
@@ -331,6 +279,7 @@ const HSC_COMPULSORY_GENERAL: SubjectTemplate[] = [
     nameBn: 'বাংলা',
     category: 'compulsory',
     isTwoPaper: true,
+    maxMarks: 200,
     defaultGrade: 'A+',
     defaultMarks: 82,
   },
@@ -341,6 +290,7 @@ const HSC_COMPULSORY_GENERAL: SubjectTemplate[] = [
     nameBn: 'ইংরেজি',
     category: 'compulsory',
     isTwoPaper: true,
+    maxMarks: 200,
     defaultGrade: 'A',
     defaultMarks: 75,
   },
@@ -351,65 +301,9 @@ const HSC_COMPULSORY_GENERAL: SubjectTemplate[] = [
     nameBn: 'তথ্য ও যোগাযোগ প্রযুক্তি',
     category: 'compulsory',
     isTwoPaper: false,
+    maxMarks: 100,
     defaultGrade: 'A+',
     defaultMarks: 86,
-  },
-];
-
-const ALIM_COMPULSORY: SubjectTemplate[] = [
-  {
-    id: 'alim-quran',
-    code: '201',
-    nameEn: 'Quran Mazid',
-    nameBn: 'কুরআন মাজিদ',
-    category: 'compulsory',
-    defaultGrade: 'A+',
-    defaultMarks: 84,
-  },
-  {
-    id: 'alim-hadith',
-    code: '202',
-    nameEn: 'Hadith & Usul-e-Hadith',
-    nameBn: 'হাদিস ও উসুলুল হাদিস',
-    category: 'compulsory',
-    defaultGrade: 'A+',
-    defaultMarks: 82,
-  },
-  {
-    id: 'alim-arabic',
-    code: '203',
-    nameEn: 'Arabic & Balagat',
-    nameBn: 'আরবি ও বালাগাত',
-    category: 'compulsory',
-    defaultGrade: 'A',
-    defaultMarks: 76,
-  },
-  {
-    id: 'alim-bangla',
-    code: '236',
-    nameEn: 'Bangla',
-    nameBn: 'বাংলা',
-    category: 'compulsory',
-    defaultGrade: 'A+',
-    defaultMarks: 83,
-  },
-  {
-    id: 'alim-english',
-    code: '237',
-    nameEn: 'English',
-    nameBn: 'ইংরেজি',
-    category: 'compulsory',
-    defaultGrade: 'A',
-    defaultMarks: 74,
-  },
-  {
-    id: 'alim-ict',
-    code: '240',
-    nameEn: 'Information & Communication Technology',
-    nameBn: 'তথ্য ও যোগাযোগ প্রযুক্তি',
-    category: 'compulsory',
-    defaultGrade: 'A+',
-    defaultMarks: 85,
   },
 ];
 
@@ -661,29 +555,19 @@ const HSC_GROUP_SUBJECTS: Record<StudyGroup, SubjectTemplate[]> = {
 
 export function getSubjectsForConfig(
   examLevel: ExamLevel,
-  group: StudyGroup,
-  board: EducationBoard = 'dhaka'
+  group: StudyGroup
 ): SubjectEntry[] {
   let templates: SubjectTemplate[] = [];
 
   if (examLevel === 'ssc') {
-    if (board === 'madrasah') {
-      const groupSpecific = SSC_GROUP_SUBJECTS[group];
-      templates = [...DAKHIL_COMPULSORY, ...groupSpecific];
-    } else {
-      const middleCompulsory = group === 'science' ? [SSC_BGS] : [SSC_GENERAL_SCIENCE];
-      templates = [
-        ...SSC_COMPULSORY_GENERAL,
-        ...middleCompulsory,
-        ...SSC_GROUP_SUBJECTS[group],
-      ];
-    }
+    const middleCompulsory = group === 'science' ? [SSC_BGS] : [SSC_GENERAL_SCIENCE];
+    templates = [
+      ...SSC_COMPULSORY_GENERAL,
+      ...middleCompulsory,
+      ...SSC_GROUP_SUBJECTS[group],
+    ];
   } else {
-    if (board === 'madrasah') {
-      templates = [...ALIM_COMPULSORY, ...HSC_GROUP_SUBJECTS[group]];
-    } else {
-      templates = [...HSC_COMPULSORY_GENERAL, ...HSC_GROUP_SUBJECTS[group]];
-    }
+    templates = [...HSC_COMPULSORY_GENERAL, ...HSC_GROUP_SUBJECTS[group]];
   }
 
   return templates.map((item) => ({
@@ -694,6 +578,7 @@ export function getSubjectsForConfig(
     category: item.category,
     isFourthSubject: item.category === 'fourth',
     isTwoPaper: item.isTwoPaper,
+    maxMarks: item.maxMarks ?? (item.isTwoPaper ? 200 : 100),
     grade: item.defaultGrade,
     marks: item.defaultMarks,
     paper1Marks: item.isTwoPaper ? item.defaultMarks : undefined,
@@ -711,8 +596,8 @@ export const UI_TEXT = {
     heroSubtitle:
       'Calculate your official Bangladesh Education Board GPA with accurate 4th subject calculation.',
     examLevelLabel: 'Exam Level',
-    sscOption: 'SSC / Dakhil',
-    hscOption: 'HSC / Alim',
+    sscOption: 'SSC',
+    hscOption: 'HSC',
     groupLabel: 'Group',
     groups: {
       science: 'Science',
@@ -732,6 +617,7 @@ export const UI_TEXT = {
     roleFourth: '4th Subject',
     twoPaperSuffix: '1st & 2nd Paper (200 Marks)',
     singlePaperSuffix: '100 Marks',
+    fiftyMarksSuffix: '50 Marks',
     fourthSelectLabel: 'Select 4th Subject',
     gpaWithFourth: 'GPA (With 4th Subject)',
     gpaWithoutFourth: 'GPA (Without 4th)',
@@ -747,13 +633,16 @@ export const UI_TEXT = {
       'Under Bangladesh Education Board rules, an F in any compulsory or main group subject results in overall GPA 0.00. Need improvement in:',
     fourthFailNote:
       'Your 4th subject has F (0.00). Per board rules, it adds +0.00 bonus without failing your overall result.',
-    invalidMarksNotice: 'Please enter valid marks between 0 and 100 per paper for highlighted subjects.',
-    incompleteMarksNotice: 'Enter marks (0–100 per paper) for all subjects to calculate GPA.',
+    invalidMarksNotice:
+      'Please enter valid marks within each subject full marks (0–50 for SSC ICT, 0–100 per paper for others).',
+    incompleteMarksNotice: 'Enter marks for all subjects to calculate GPA.',
     rulesHeading: 'Official Bangladesh Education Board Grading Scale',
     rulesSub:
-      'Standard NCTB evaluation intervals applied across Dhaka, Rajshahi, Comilla, Jessore, Chattogram, Barishal, Sylhet, Dinajpur, Mymensingh, Madrasah, and Technical boards.',
+      'Standard NCTB grading thresholds for 100-mark, 200-mark (1st & 2nd Paper), and 50-mark (SSC ICT) subjects in SSC and HSC.',
     fourthRuleHeading: 'How 4th Subject (Optional Subject) Bonus Works',
-    colInterval: 'Marks Interval',
+    colInterval: '100 Marks',
+    colInterval200: '200 Marks (1st + 2nd)',
+    colInterval50: '50 Marks (SSC ICT)',
     colLetter: 'Letter Grade',
     colPoint: 'Grade Point',
     colAssessment: 'Assessment',
@@ -767,8 +656,8 @@ export const UI_TEXT = {
     heroSubtitle:
       'সঠিক চতুর্থ বিষয়ের বোনাস পয়েন্টসহ বাংলাদেশ শিক্ষা বোর্ডের অফিসিয়াল জিপিএ হিসাব করুন।',
     examLevelLabel: 'পরীক্ষার স্তর',
-    sscOption: 'এসএসসি / দাখিল',
-    hscOption: 'এইচএসসি / আলিম',
+    sscOption: 'এসএসসি',
+    hscOption: 'এইচএসসি',
     groupLabel: 'বিভাগ',
     groups: {
       science: 'বিজ্ঞান',
@@ -788,6 +677,7 @@ export const UI_TEXT = {
     roleFourth: '৪র্থ বিষয়',
     twoPaperSuffix: '১ম ও ২য় পত্র (২০০ নম্বর)',
     singlePaperSuffix: '১০০ নম্বর',
+    fiftyMarksSuffix: '৫০ নম্বর',
     fourthSelectLabel: '৪র্থ বিষয় নির্বাচন করুন',
     gpaWithFourth: 'চূড়ান্ত জিপিএ (৪র্থ বিষয়সহ)',
     gpaWithoutFourth: 'জিপিএ (৪র্থ বিষয় ছাড়া)',
@@ -803,13 +693,16 @@ export const UI_TEXT = {
       'বাংলাদেশ শিক্ষা বোর্ডের নিয়মানুযায়ী, যেকোনো আবশ্যিক বা মূল বিষয়ে F পেলে মোট জিপিএ ০.০০ হয়। উন্নতি প্রয়োজন:',
     fourthFailNote:
       'আপনার ৪র্থ বিষয়ে F (০.০০) এসেছে। বোর্ডের নিয়মে এটি বোনাস হিসেবে ০.০০ যোগ করবে এবং মূল ফলাফলে ফেল হবে না।',
-    invalidMarksNotice: 'লাল চিহ্নিত বিষয়ে প্রতি পত্রে ০ থেকে ১০০ এর মধ্যে সঠিক নম্বর দিন।',
+    invalidMarksNotice:
+      'লাল চিহ্নিত বিষয়ে নির্ধারিত পূর্ণমানের মধ্যে সঠিক নম্বর দিন (এসএসসি আইসিটি ০–৫০, অন্য বিষয়ে প্রতি পত্রে ০–১০০)।',
     incompleteMarksNotice: 'সঠিক জিপিএ হিসাবের জন্য সব বিষয়ের নম্বর দিন।',
     rulesHeading: 'বাংলাদেশ শিক্ষা বোর্ডের অফিসিয়াল গ্রেডিং স্কেল',
     rulesSub:
-      'ঢাকা, রাজশাহী, কুমিল্লা, যশোর, চট্টগ্রাম, বরিশাল, সিলেট, দিনাজপুর, ময়মনসিংহ, মাদ্রাসা ও কারিগরি বোর্ডে প্রযোজ্য গ্রেডিং পদ্ধতি।',
+      'এসএসসি ও এইচএসসি পরীক্ষার ১০০, ২০০ (১ম ও ২য় পত্র) এবং ৫০ নম্বরের (এসএসসি আইসিটি) বিষয়ের অফিসিয়াল গ্রেডিং পদ্ধতি।',
     fourthRuleHeading: 'চতুর্থ বিষয়ের (ঐচ্ছিক বিষয়) বোনাস পয়েন্টের নিয়ম',
-    colInterval: 'নম্বরের ব্যবধান',
+    colInterval: '১০০ নম্বর',
+    colInterval200: '২০০ নম্বর (১ম + ২য়)',
+    colInterval50: '৫০ নম্বর (এসএসসি আইসিটি)',
     colLetter: 'লেটার গ্রেড',
     colPoint: 'গ্রেড পয়েন্ট',
     colAssessment: 'মূল্যায়ন',
